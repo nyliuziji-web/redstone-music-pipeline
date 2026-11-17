@@ -43,3 +43,5 @@ session.lock
 .idea/
 .vscode/
 node_modules/
+/client/.gradle/
+/client/build/

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "stage": "sound",
+  "scope": "sample",
+  "verdict": "needs_review",
+  "reviewer": {
+    "kind": "agent",
+    "name": "填写实际评审者"
+  },
+  "method": "static",
+  "inputs": [
+    {
+      "path": "previews/candidate.wav",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "evidence": [],
+  "summary": "这是模板，先填写实际文件路径、hash、方法和结论；静态检查不表示已听审。若记录用户反馈，使用kind=user并加入用户实际表达的userFeedback。"
+}

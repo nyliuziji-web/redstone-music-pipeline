@@ -1,0 +1,17 @@
+{
+  "project": "Gradle Wrapper",
+  "version": "8.12.1",
+  "source": "https://github.com/gradle/gradle/tree/v8.12.1",
+  "wrapperJar": {
+    "url": "https://raw.githubusercontent.com/gradle/gradle/v8.12.1/gradle/wrapper/gradle-wrapper.jar",
+    "sha256": "2db75c40782f5e8ba1fc278a5574bab070adccb2d21ca5a6e5ed840888448046"
+  },
+  "distribution": {
+    "url": "https://services.gradle.org/distributions/gradle-8.12.1-bin.zip",
+    "sha256": "8d97a97984f6cbd2b85fe4c60a743440a347544bf18818048e611f5288d46c94"
+  },
+  "license": "Apache-2.0",
+  "licenseFile": "LICENSE-Gradle.txt",
+  "bundled": ["wrapper scripts", "wrapper bootstrap JAR"],
+  "notBundled": ["Gradle distribution", "Minecraft binaries", "Fabric dependencies", "game assets"]
+}

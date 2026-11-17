@@ -8,7 +8,8 @@ from pathlib import Path
 import subprocess
 import zipfile
 
-DEPENDENCY_FILES=['redstone_music/assets/PipelineFX.java','redstone_music/assets/PipelineCaptions.java']
+DEPENDENCY_FILES=['redstone_music/assets/PipelineFX.java','redstone_music/assets/PipelineCaptions.java',
+                  'redstone_music/stage_tools.py','redstone_music/_vendor/mcbuild_voxel.py']
 
 
 def write(p,v):Path(p).write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -19,8 +20,7 @@ def runtime_file(ctx):
     if value:
         p=Path(value)
         return (p if p.is_absolute() else Path(ctx['project'])/p).resolve()
-    p=Path(ctx['root'])/'.runtime/nevada_fx_client/runtime.json'
-    return p if p.exists() else None
+    return None
 
 
 def compile_inputs(runtime):
@@ -36,6 +36,10 @@ def compile_inputs(runtime):
 
 
 def fingerprint_inputs(ctx):
+    jar=ctx['config'].get('runtime',{}).get('clientJar')
+    if jar:
+        p=Path(jar);p=p if p.is_absolute() else Path(ctx['project'])/p
+        return [p.resolve()]
     p=runtime_file(ctx)
     if not p or not p.exists() or not ctx['config'].get('visuals',{}).get('enabled',True):return []
     java,cp=compile_inputs(p)
@@ -72,8 +76,36 @@ def run(ctx):
     elif length>40:
         captions['cues']=[{'id':'title','begin':0,'end':min(120,length),'text':cfg.get('title',cfg['slug']),'translation':'','x':.5,'y':.2,'align':'center','effect':'double_rule','color':'FFD69A'}]
     write(out/'captions.json',captions)
+    from .stage_tools import compile_show,validate_show
+    source_show=cfg.get('inputs',{}).get('showScore')
+    if source_show:
+        p=Path(source_show);p=p if p.is_absolute() else Path(ctx['project'])/p
+        reference=json.loads(p.read_text(encoding='utf-8-sig'))
+        reference['namespace']=info['namespace'];reference['sampleKey']=info['fxSample']['key']
+        if reference.get('lengthGT')!=length:raise ValueError('Show score lengthGT must match the compiled music excerpt')
+        validate_show(reference)
+        if not source and 'captions' in reference:
+            captions['cues']=reference['captions'];write(out/'captions.json',captions)
+    else:
+        generated=compile_show({'info':info,'notes':expected['notes']},out/'reference_show')
+        reference=json.loads(Path(generated['showScore']).read_text(encoding='utf-8'))
+    reference['captions']=captions['cues']
+    validate_show(reference);write(out/'show_score.json',reference)
     warnings=[];enabled=cfg.get('visuals',{}).get('enabled',True);runtime=runtime_file(ctx)
-    if enabled and runtime and runtime.is_file():
+    jar=cfg.get('runtime',{}).get('clientJar')
+    if enabled and jar:
+        p=Path(jar);p=p if p.is_absolute() else Path(ctx['project'])/p
+        with zipfile.ZipFile(p) as source:
+            if 'dev/redstone/show/MusicShowClient.class' not in source.namelist():
+                raise ValueError('runtime.clientJar must be built from the portable client source (MusicShowClient)')
+            if source.testzip() is not None:raise ValueError('Invalid client JAR')
+            with zipfile.ZipFile(out/'client.jar','w',zipfile.ZIP_DEFLATED) as target:
+                for item in source.infolist():
+                    if item.filename=='assets/redstone_music/show_score.json':continue
+                    target.writestr(item,source.read(item.filename))
+                target.writestr('assets/redstone_music/show_score.json',json.dumps(reference,ensure_ascii=False))
+        warnings.append('Portable client packaged. Actual rendering, captions, shaders and listening still require client verification.')
+    elif enabled and runtime and runtime.is_file():
         javac,cp=compile_inputs(runtime)
         if not javac.is_file() or not cp:raise ValueError('Client compilation requires a Java 21 JDK and intermediary/Fabric classpath')
         source_dir=out/'java';source_dir.mkdir();classes=out/'classes';classes.mkdir()
@@ -95,7 +127,7 @@ def run(ctx):
         with zipfile.ZipFile(out/'client.jar','w',zipfile.ZIP_DEFLATED) as z:
             for p in sorted(classes.rglob('*')):
                 if p.is_file():z.write(p,p.relative_to(classes).as_posix())
-    elif enabled:warnings.append('Client build environment absent: assets generated, client rendering is not packaged. Set runtime.clientRuntime.')
+    elif enabled:warnings.append('Client build environment absent: assets generated, client rendering is not packaged. Build client/ and set runtime.clientJar, or explicitly supply legacy runtime.clientRuntime.')
     report={'schemaVersion':1,'visualOnsets':len(notes),'sections':len(sections),'transitions':len(transitions),'captions':len(captions['cues']),
         'clientJarBuilt':(out/'client.jar').is_file(),'clientVerified':False,'warnings':warnings}
     write(out/'report.json',report);return report

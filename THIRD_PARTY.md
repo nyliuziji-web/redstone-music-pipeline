@@ -21,3 +21,17 @@ The Nevada production used third-party reference audio, music arrangements, soun
 `examples/demo.mid` is an original synthetic test phrase dedicated under CC0-1.0, matching the generator's declaration. It contains no sampled audio or excerpt from Nevada. See the [CC0 legal code](https://creativecommons.org/publicdomain/zero/1.0/legalcode).
 
 User-supplied MIDI, captions, sound packs and generated delivery bundles remain subject to the user's source rights and any upstream terms. Public source exports and private performance delivery are separate operations; generated deliverables should not be committed automatically.
+
+## Vendored Minecraft skill reference snapshots
+
+`skills/_upstream/minecraft-agent-skills/` contains unmodified text snapshots of four selected skills from [Jahrome907/minecraft-agent-skills](https://github.com/Jahrome907/minecraft-agent-skills), commit `22d61ce6b7a0c5f215008824aa6b94ecc73f2a43`, obtained 2026-11-17: Minecraft modding, resource packs, datapacks and testing. The upstream MIT copyright and permission notice is retained in that directory's `LICENSE`; `provenance.json` records original paths, immutable source URLs and SHA-256 hashes.
+
+These are reference snapshots (`.txt`), not globally installed or automatically invoked skills. Their examples cover broader game versions and their original relative references are resolved against the upstream repository, not this package. The project's own skills choose the 1.21.1 production path and require actual build/runtime validation. No Minecraft assets or third-party model weights are included with these references.
+
+## Integrated professional tooling
+
+Optional dependencies include Mido, music21, librosa, SoundFile, SciPy, Pillow, TinySoundFont, SwiftF0/ONNX Runtime and JSON Schema. They are installed separately under their distribution notices; their source, dependency graph and pinned local environment are recorded through pyproject/profiles. No external SoundFont is included. The `learn` generator's original MIDI and synthesized sounds are CC0-1.0; project code remains MIT.
+
+The unmodified sparse voxel module from [harrynull/mcbuild](https://github.com/harrynull/mcbuild), commit `34ce86372d4c23f4d83d4e24fc256cb399d6c3e3`, is vendored in `redstone_music/_vendor/mcbuild_voxel.py`. Its MIT license is preserved in `integrations/mcbuild/LICENSE`, with exact source/hash in provenance.json. Hosted agents, NeoForge runtime and Minecraft textures are excluded.
+
+The standard Gradle wrapper uses upstream Gradle's Apache-2.0 license, retained in `client/gradle/LICENSE-Gradle.txt`. The Fabric build downloads its declared dependencies separately. Photon and its dependencies are not bundled; the exact release license and backend comparison remain separate checks.

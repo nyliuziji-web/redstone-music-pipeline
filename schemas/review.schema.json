@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Version-bound review",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "stage",
+    "scope",
+    "verdict",
+    "reviewer",
+    "method",
+    "inputs",
+    "summary"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "stage": {
+      "enum": [
+        "music",
+        "sound",
+        "machine",
+        "visuals",
+        "capture",
+        "final"
+      ]
+    },
+    "scope": {
+      "enum": [
+        "sample",
+        "full"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "approved",
+        "changes_requested",
+        "needs_review"
+      ]
+    },
+    "reviewer": {
+      "type": "object",
+      "required": [
+        "kind",
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "user",
+            "agent",
+            "tool"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "method": {
+      "enum": [
+        "actual_listening",
+        "actual_viewing",
+        "actual_listening_and_viewing",
+        "static",
+        "runtime_measurement"
+      ]
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "userFeedback": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

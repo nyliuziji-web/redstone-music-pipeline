@@ -1,0 +1,13 @@
+include START_HERE.md AGENTS.md PIPELINE.md PIPELINE_VERIFICATION.md THIRD_PARTY.md LICENSE setup.py run_pipeline.py requirements.txt
+recursive-include agents *.md
+recursive-include skills *.md *.txt *.json LICENSE*
+recursive-include schemas *.json
+recursive-include profiles *.json *.txt
+recursive-include templates *.md *.json
+recursive-include docs *.md *.json
+recursive-include examples *.mid *.json *.md *.py
+recursive-include client *.java *.gradle *.properties *.json *.md *.sh *.bat *.jar
+recursive-include integrations *.json *.md *.txt LICENSE*
+global-exclude *.pyc
+prune client/build
+prune client/.gradle

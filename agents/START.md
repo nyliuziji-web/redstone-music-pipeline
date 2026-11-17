@@ -1,6 +1,6 @@
 # Main agent: produce a redstone music performance
 
-For production-kit development, read [the rewrite plan](../docs/REWRITE_PLAN.md) and [Nevada lessons](../docs/NEVADA_RETROSPECTIVE.md). Their proposed skills and interfaces are not implemented CLI features. The default collaboration is autonomous agent work with user listening/viewing at representative samples and final delivery.
+New agents start with [START_HERE](../START_HERE.md) and the [producer skill](../skills/redstone-producer/SKILL.md). [Implementation status](../docs/IMPLEMENTATION_STATUS.md) distinguishes executable features and remaining game/artistic checks. The default collaboration is autonomous agent work with user listening/viewing at representative samples and final delivery.
 
 Use the executable pipeline. Start with `python run_pipeline.py doctor` and read `PIPELINE.md`. For a new song, initialize a new project with a user-supplied MIDI master or a brief/reference. Never reuse a previous song's project directory.
 
