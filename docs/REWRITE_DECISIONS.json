@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "documentType": "rewrite-design-baseline",
+  "date": "2026-11-17",
+  "target": "next integrated production kit",
+  "status": "design_defined_implementation_not_started",
+  "purpose": "A self-contained production kit that lets a capable new agent create, diagnose, validate and hand off a new redstone music performance without private Nevada files or earlier chats.",
+  "userConfirmed": {
+    "defaultAutonomy": "agent advances independently",
+    "artisticReview": "representative samples and final result",
+    "confirmation": "explicit user reply in the current design turn"
+  },
+  "primaryDocuments": [
+    "docs/REWRITE_PLAN.md",
+    "docs/NEVADA_RETROSPECTIVE.md"
+  ],
+  "baseline": {
+    "minecraft": "Java Edition 1.21.1",
+    "java": "JDK 21",
+    "fabricLoader": "0.18.2 migration baseline, clean-instance revalidation required",
+    "fabricApi": "0.116.4+1.21.1 migration baseline",
+    "python": "3.12",
+    "node": "24 LTS",
+    "primaryOS": "Windows x64",
+    "offlineCI": "Windows and Linux",
+    "host": "generic local files + shell; Codex/GPT first validation host",
+    "audioReview": "actual model/tool audio input or user review"
+  },
+  "ownSkills": [
+    "redstone-producer",
+    "music-director",
+    "noteblock-arranger",
+    "sound-designer",
+    "redstone-engineer",
+    "stage-designer",
+    "show-director",
+    "verify-and-deliver"
+  ],
+  "integrations": [
+    {
+      "project": "music21",
+      "decision": "first-batch",
+      "purpose": "read-only musical analysis",
+      "source": "https://github.com/cuthbertLab/music21",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "mido",
+      "decision": "first-batch",
+      "purpose": "event-level MIDI edits",
+      "source": "https://github.com/mido/mido",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "tinysoundfont",
+      "decision": "first-batch",
+      "purpose": "offline MIDI audition",
+      "source": "https://pypi.org/project/tinysoundfont/0.3.7/",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "MuseScore General SoundFont",
+      "decision": "first-batch",
+      "purpose": "licensed GM audition resource; pin file and verify renderer compatibility",
+      "source": "https://musescore.org/en/handbook/3/soundfonts-and-sfz-files",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "numpy / scipy / soundfile",
+      "decision": "first-batch",
+      "purpose": "audio processing, calibration and decoding",
+      "source": "https://github.com/bastibe/python-soundfile",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "librosa",
+      "decision": "first-batch",
+      "purpose": "reference feature analysis",
+      "source": "https://github.com/librosa/librosa",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "ffmpeg / ffprobe",
+      "decision": "first-batch",
+      "purpose": "media intake, comparisons and capture validation",
+      "source": "https://ffmpeg.org/",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "swift-f0",
+      "decision": "first-batch-on-demand",
+      "purpose": "monophonic pitch assistance",
+      "source": "https://github.com/lars76/swift-f0",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "mcbuild",
+      "decision": "first-batch",
+      "purpose": "isolated offline blueprint/voxel/preview adapter, excluding bundled Minecraft assets and hosted controller",
+      "source": "https://github.com/harrynull/mcbuild",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "minecraft-agent-skills",
+      "decision": "first-batch",
+      "purpose": "selected audited reference skills, pinned and attributed",
+      "source": "https://github.com/Jahrome907/minecraft-agent-skills",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "minecraft-modding-mcp",
+      "decision": "optional",
+      "purpose": "source and mapping inspection",
+      "source": "https://github.com/adhi-jp/minecraft-modding-mcp",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "basic-pitch",
+      "decision": "optional",
+      "purpose": "polyphonic single-instrument transcription, isolated compatible environment",
+      "source": "https://github.com/spotify/basic-pitch",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "python-audio-separator",
+      "decision": "optional",
+      "purpose": "stem separation when input needs it; model terms separate",
+      "source": "https://github.com/nomadkaraoke/python-audio-separator",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "Infinote",
+      "decision": "optional",
+      "purpose": "extended note-block sound profile after exact artifact and runtime validation",
+      "source": "https://github.com/RS-256/infinote",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "Lodestone",
+      "decision": "optional",
+      "purpose": "interactive schematic preview",
+      "source": "https://github.com/mattzh72/lodestone",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "obs-websocket",
+      "decision": "optional",
+      "purpose": "capture control if OBS selected",
+      "source": "https://github.com/obsproject/obs-websocket",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "FluidSynth / NoteBlockLib",
+      "decision": "optional",
+      "purpose": "renderer alternative / conversion comparison",
+      "source": "https://github.com/RaphiMC/NoteBlockLib",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "Photon Fabric 1.6",
+      "decision": "bounded-experiment",
+      "purpose": "same-scene visual comparison before default selection",
+      "source": "https://modrinth.com/mod/photon-editor-fabric",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "ColorBlock / AnotherColorBlock",
+      "decision": "study-and-future-adapter",
+      "purpose": "artistic target; exact compatible distribution and terms unresolved",
+      "source": "https://mc.ecylt.top/pages/creation/index.html",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "Photon 2 / ExParticle",
+      "decision": "study-and-future-adapter",
+      "purpose": "separate version/loader/terms; no implicit platform migration",
+      "source": "https://github.com/Low-Drag-MC/Photon",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "MIDI-GPT / MuScriptor / Structured-Arrangement-Code / MusicLang Predict",
+      "decision": "deferred",
+      "purpose": "generation/transcription research; weight terms and environments need experiments",
+      "source": "https://github.com/Metacreation-Lab/MIDI-GPT",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "ComposerBench",
+      "decision": "exclude-code",
+      "purpose": "public source has no open-source grant at research time",
+      "source": "https://github.com/newmattock/ComposerBench",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    },
+    {
+      "project": "Orpheus / DAW-VST / Blender-GDPC / extra agent orchestrators",
+      "decision": "deferred",
+      "purpose": "adopt only for demonstrated unmet capability",
+      "source": "https://github.com/mal0ware/Orpheus",
+      "implementationStatus": "not_added_by_this_design_change",
+      "versionLockStatus": "pin_and_validate_during_implementation"
+    }
+  ],
+  "milestones": [
+    "M0 entry, evidence and environment",
+    "M1 music and sound feedback",
+    "M2 portable game engineering",
+    "M3 stage and show design",
+    "M4 handoff and recording",
+    "M5 independent cold-start production"
+  ],
+  "unresolvedExperiments": [
+    "specific GM SoundFont artifact and synthesizer compatibility",
+    "visual backend same-scene comparison and user review",
+    "fresh-machine authenticated client launch and real recording path"
+  ],
+  "releaseCriterion": "Independent new-agent production and handoff without hidden Nevada context, with user sample/final reviews and version-bound evidence.",
+  "nonClaims": [
+    "No new implementation shipped by this plan",
+    "No new dependency installed by this plan",
+    "No new artistic sample approved",
+    "Existing v0.1 tests do not prove full cold-start production"
+  ]
+}

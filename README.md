@@ -4,6 +4,8 @@
 
 实际已跑的测试与边界见 [v0.1 验证记录](PIPELINE_VERIFICATION.md)。
 
+下一版的产品目标、Skill、工具集成、环境与冷启动验收见[正式改写方案](docs/REWRITE_PLAN.md)，经验依据见[Nevada正式复盘](docs/NEVADA_RETROSPECTIVE.md)。方案中的新增能力尚待实施。
+
 最快试跑：`python run_pipeline.py demo`。重复运行会复用未改变且完整的产物，不覆盖旧版本。系统不会把技术检查当作已经听审、录制或投稿。
 
 A local, resumable production pipeline for Minecraft Java note-block performances. It turns a MIDI master into a physical redstone machine, a playable world, a Litematica schematic, synchronized visual assets and a versioned delivery bundle.

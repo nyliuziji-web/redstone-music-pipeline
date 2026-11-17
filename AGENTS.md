@@ -1,5 +1,7 @@
 # Main agent: produce a redstone music performance
 
+For production-kit development, read [the rewrite plan](docs/REWRITE_PLAN.md) and [Nevada lessons](docs/NEVADA_RETROSPECTIVE.md). Their proposed skills and interfaces are not implemented CLI features. The default collaboration is autonomous agent work with user listening/viewing at representative samples and final delivery.
+
 Use the executable pipeline. Start with `python run_pipeline.py doctor` and read `PIPELINE.md`. For a new song, initialize a new project with a user-supplied MIDI master or a brief/reference. Never reuse a previous song's project directory.
 
 1. Run the project. Successful stages are immutable, hashed and reusable. Read the returned `releasePath`, warnings and validation boundaries.
@@ -9,7 +11,7 @@ Use the executable pipeline. Start with `python run_pipeline.py doctor` and read
 5. A required engine change is implemented in source, tested, then rerun. Do not force an unsupported idea through the narrow configPatch interface or delete assertions to make a stage pass.
 6. Independent quality review uses exported bytes and actual evidence. Technical success must not be relabeled as artistic approval, actual recording or publication.
 
-Roles: [music](music.md), [sound](sound.md), [machine](machine.md), [visuals](visuals.md), [quality](quality.md).
+Roles: [music](agents/music.md), [sound](agents/sound.md), [machine](agents/machine.md), [visuals](agents/visuals.md), [quality](agents/quality.md).
 
 Only the main agent edits the project contract or integrates competing proposals. Specialists do not modify committed artifacts, other tasks' files, installed game profiles or remote repositories. Keep compatible independent work parallel; operations on one project and a test process remain exclusive. Respect the configured attempt and resource budgets; report a concrete external blocker when it cannot be solved within the available tools.
 

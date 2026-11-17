@@ -1,5 +1,7 @@
 # Main agent: produce a redstone music performance
 
+For production-kit development, read [the rewrite plan](../docs/REWRITE_PLAN.md) and [Nevada lessons](../docs/NEVADA_RETROSPECTIVE.md). Their proposed skills and interfaces are not implemented CLI features. The default collaboration is autonomous agent work with user listening/viewing at representative samples and final delivery.
+
 Use the executable pipeline. Start with `python run_pipeline.py doctor` and read `PIPELINE.md`. For a new song, initialize a new project with a user-supplied MIDI master or a brief/reference. Never reuse a previous song's project directory.
 
 1. Run the project. Successful stages are immutable, hashed and reusable. Read the returned `releasePath`, warnings and validation boundaries.
