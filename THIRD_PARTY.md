@@ -35,3 +35,5 @@ Optional dependencies include Mido, music21, librosa, SoundFile, SciPy, Pillow, 
 The unmodified sparse voxel module from [harrynull/mcbuild](https://github.com/harrynull/mcbuild), commit `34ce86372d4c23f4d83d4e24fc256cb399d6c3e3`, is vendored in `redstone_music/_vendor/mcbuild_voxel.py`. Its MIT license is preserved in `integrations/mcbuild/LICENSE`, with exact source/hash in provenance.json. Hosted agents, NeoForge runtime and Minecraft textures are excluded.
 
 The standard Gradle wrapper uses upstream Gradle's Apache-2.0 license, retained in `client/gradle/LICENSE-Gradle.txt`. The Fabric build downloads its declared dependencies separately. Photon and its dependencies are not bundled; the exact release license and backend comparison remain separate checks.
+
+`examples/night-study/` contains the independent agent's original MIDI and declarative night-study designs, dedicated under CC0-1.0 with no external music or samples. They are candidate educational assets, not a grant of artistic approval.

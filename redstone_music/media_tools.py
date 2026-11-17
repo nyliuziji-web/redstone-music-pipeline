@@ -32,11 +32,11 @@ def inspect_media(source, out=None):
 
 
 def capture_evidence(project, source, out, kind='sample'):
-    from .core import load_config, project_lock, status
+    from .core import load_config, project_lock, status, owned
     if kind not in ('sample','full'):raise ValueError('Capture kind must be sample or full')
     project=Path(project).resolve(strict=True)
     out=Path(out).resolve()
-    if not out.is_relative_to((project/'evidence').resolve()):raise ValueError('Capture report must remain inside project/evidence')
+    if not out.is_relative_to(owned(project,'evidence')):raise ValueError('Capture report must remain inside project/evidence')
     media=inspect_media(source)
     with project_lock(project):
         load_config(project)

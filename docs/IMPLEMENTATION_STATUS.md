@@ -14,7 +14,11 @@
 
 干净的 Python 3.12.16 独立环境安装 production / pitch / dev；实际 numpy、NBT、MIDI、SoundFile、music21、SciPy、TinySoundFont 小操作通过；librosa、SwiftF0、FFmpeg 在测试中处理原创音频。GM 只有引擎测试，尚无选定的发行 SoundFont。
 
-首轮统一测试：85 项，84 通过、1 项私有 Nevada 素材回归按预期跳过。新增媒体/冷启动回归的最终数量以仓库 CI 和发布记录为准。源码 wheel 已实际构建；最终隔离安装记录另行更新。
+统一测试 91 项，90 通过、1 项私有 Nevada 素材回归按预期跳过；Windows/Linux GitHub CI 与独立 Fabric 构建均成功。CI 首次通过提交为 `21a537b`，运行号 `44053833393`。8 个 Skill 通过官方 quick_validate。声音底座映射另用实际 1.21.1 named 游戏类核对，错误底座和非法 profile 的修复任务均有回归。
+
+源码 wheel / sdist 已实际构建。独立 wheel-only 环境（Python -I，核心依赖，没有源目录导入）通过 bundle-check，并完整跑通 8 秒 demo 六阶段；wheel 内 bundle-export 导出 120 个源码/知识文件并保留完整工作入口。源码包后续新增原创案例后文件数量会变化。
+
+标准 JDK21 / Loom1.9.2 / Yarn1.21.1+build.3 / Gradle8.12.1 运行 JAR 构建成功，实际 remap 为 intermediary 类名，ZIP 与作品 score 再打包检查通过。构建 JAR SHA256：`e5b1dcfc9960912c5f4d7663fc322108972be87feb9eb33a0b87ad11e044cddf`。这不授予客户端已实际运行。
 
 独立新 agent 未继承开发对话，仅读取公共工作包，原创《窗外月迹》：12 小节、72 BPM、40 秒、56 源音、四个原创声音槽、零移调；15,558 世界方块含 512 装饰方块，73 个演出动作。正式任务导入与六阶段构建到 candidate_ready，Anvil/Litematica 独立回读、ZIP CRC 通过。详细[冷启动审计](COLD_START_REPORT.md)。
 
