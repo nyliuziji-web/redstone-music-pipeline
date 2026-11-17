@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Calibrated sample routing",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "slots",
+    "roles"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,47}$"
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "slots": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "instrument",
+          "baseBlock",
+          "rootMidi"
+        ],
+        "properties": {
+          "instrument": {
+            "type": "string",
+            "minLength": 1
+          },
+          "baseBlock": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "rootMidi": {
+            "type": "integer",
+            "minimum": 12,
+            "maximum": 115
+          },
+          "sample": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "gain": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "synthesis": {
+            "type": "object"
+          },
+          "sustain": {
+            "type": "object",
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "natural",
+                  "retrigger"
+                ]
+              },
+              "stepGT": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

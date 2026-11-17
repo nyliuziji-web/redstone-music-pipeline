@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "original_learning_bank",
+  "slots": {
+    "lead": {
+      "instrument": "harp",
+      "baseBlock": "minecraft:dirt",
+      "rootMidi": 66,
+      "synthesis": {"kind": "pluck", "seconds": 0.8, "gain": 0.28},
+      "gain": 1,
+      "sustain": {"mode": "natural"}
+    },
+    "pad": {
+      "instrument": "flute",
+      "baseBlock": "minecraft:clay",
+      "rootMidi": 78,
+      "synthesis": {"kind": "sustain", "seconds": 1.3, "gain": 0.12},
+      "gain": 1,
+      "sustain": {"mode": "retrigger", "stepGT": 8}
+    },
+    "bass": {
+      "instrument": "bass",
+      "baseBlock": "minecraft:oak_planks",
+      "rootMidi": 42,
+      "synthesis": {"kind": "bass", "seconds": 0.8, "gain": 0.25},
+      "gain": 1,
+      "sustain": {"mode": "natural"}
+    },
+    "kick": {
+      "instrument": "basedrum",
+      "baseBlock": "minecraft:stone",
+      "rootMidi": 66,
+      "synthesis": {"kind": "kick", "seconds": 0.25, "gain": 0.4},
+      "gain": 1,
+      "sustain": {"mode": "natural"}
+    }
+  },
+  "roles": {
+    "voice": "lead",
+    "theme_attack": "lead",
+    "theme_body": "lead",
+    "piano": "lead",
+    "chords": "pad",
+    "pad": "pad",
+    "sub_bass": "bass",
+    "mid_bass": "bass",
+    "kick": "kick"
+  }
+}

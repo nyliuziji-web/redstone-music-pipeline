@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "java-1.21.1-fabric",
+  "minecraft": "1.21.1",
+  "javaMajor": 21,
+  "fabricLoader": "0.18.2",
+  "fabricApi": "0.116.4+1.21.1",
+  "pythonSeries": "3.12",
+  "nodeMajor": 24,
+  "requiredGameMods": ["fabric-api"],
+  "optionalProfiles": ["photon-fabric-experiment", "extended-noteblocks"],
+  "scope": "Migration baseline; validate actual imported artifacts. No game files or account included.",
+  "artisticReview": "user reviews representative samples and final result"
+}

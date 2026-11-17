@@ -1,0 +1,12 @@
+{
+  "schemaVersion":1,
+  "id":"moon_traces_bank",
+  "description":"Original quiet night study: calibrated separated voices",
+  "slots":{
+    "moon":{"instrument":"harp","baseBlock":"minecraft:dirt","rootMidi":72,"gain":1,"synthesis":{"kind":"sustain","seconds":1.7,"gain":0.22},"sustain":{"mode":"natural"}},
+    "reflection":{"instrument":"guitar","baseBlock":"minecraft:white_wool","rootMidi":60,"gain":1,"synthesis":{"kind":"pluck","seconds":1.8,"gain":0.075},"sustain":{"mode":"natural"}},
+    "foundation":{"instrument":"bass","baseBlock":"minecraft:oak_planks","rootMidi":42,"gain":1,"synthesis":{"kind":"bass","seconds":2.5,"gain":0.15},"sustain":{"mode":"natural"}},
+    "distant":{"instrument":"bell","baseBlock":"minecraft:gold_block","rootMidi":81,"gain":1,"synthesis":{"kind":"pluck","seconds":1.3,"gain":0.065},"sustain":{"mode":"natural"}}
+  },
+  "roles":{"theme_attack":"moon","chords":"reflection","sub_bass":"foundation","answer":"distant"}
+}

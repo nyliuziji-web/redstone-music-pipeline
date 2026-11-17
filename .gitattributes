@@ -1,0 +1,7 @@
+* text=auto
+client/gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.mid binary
+skills/_upstream/** -text
+redstone_music/_vendor/** -text

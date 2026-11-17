@@ -68,7 +68,8 @@ def run_server(ctx,out,info):
         bypos={(n['x'],n['y'],n['z']):n for n in expected}
         for n in actual:
             q=bypos[n['x'],n['y'],n['z']]['q']
-            if n['camera']!=[37.5,112.5,70.5+q]:raise ValueError('Actual server camera target drifted')
+            camera=info['camera']
+            if n['camera']!=[camera['x'],camera['eyeY'],68.5+camera['targetLeadBlocks']+q]:raise ValueError('Actual server camera target drifted')
         return len(actual)
     try:
         until(r'Done \(');until('NEVADA_FULL_READY')

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "redstone_music_show",
+  "version": "${version}",
+  "name": "Redstone Music Show",
+  "description": "Music-GT-driven local performance effects. Sound remains physical redstone.",
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {"client": ["dev.redstone.show.MusicShowClient"]},
+  "depends": {"fabricloader": ">=0.18.2", "minecraft": "1.21.1", "java": ">=21", "fabric-api": "*"}
+}

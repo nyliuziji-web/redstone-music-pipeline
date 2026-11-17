@@ -292,7 +292,7 @@ def run(ctx):
     if not runtime["clientVerified"]:
         warnings.append("Client rendering, interpolation and cleanup remain unverified")
     delivery_bindings = []
-    for stage, folders, filenames in (("machine", ("world", "helper"), ("performance.litematic",)), ("sound", (), ("resources.zip",)), ("visuals", (), ("client.jar", "show_assets.json", "captions.json"))):
+    for stage, folders, filenames in (("machine", ("world", "helper"), ("performance.litematic",)), ("sound", (), ("resources.zip",)), ("visuals", (), ("client.jar", "show_assets.json", "captions.json", "show_score.json"))):
         if stage not in dependencies:
             continue
         base = dependencies[stage]

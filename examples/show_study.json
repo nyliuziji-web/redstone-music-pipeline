@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "clock": "musicGT",
+  "namespace": "redstone_music",
+  "sampleKey": 5,
+  "lengthGT": 200,
+  "effects": [
+    {"id":"node","kind":"node","beginGT":0,"endGT":40,"position":[0,112,8],"color":"FFD17C","radius":1.2,"points":32},
+    {"id":"ring","kind":"ring","beginGT":30,"endGT":80,"position":[0,111,20],"color":"57DFFF","radius":4,"points":64},
+    {"id":"helix","kind":"helix","beginGT":70,"endGT":140,"position":[-3,112,40],"color":"C78BFF","radius":1.4,"height":4,"points":64},
+    {"id":"phrase","kind":"bezier","beginGT":120,"endGT":200,"position":[0,112,60],"color":"DAF3FF","radius":1,"points":64,
+      "controlPoints":[[-8,112,60],[-5,122,65],[5,120,70],[8,113,80]]}
+  ],
+  "captions": [{"id":"title","begin":0,"end":60,"text":"Original geometry study","x":0.5,"y":0.2}]
+}

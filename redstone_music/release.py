@@ -59,7 +59,7 @@ def run(ctx):
         shutil.copyfile(resource, package / "world/resources.zip")
     visuals = deps.get("visuals")
     if visuals:
-        for name in ("client.jar", "show_assets.json", "captions.json"):
+        for name in ("client.jar", "show_assets.json", "captions.json", "show_score.json"):
             if (visuals / name).exists():
                 shutil.copyfile(visuals / name, package / name)
     # Export concise facts only; project config can contain local/private paths.

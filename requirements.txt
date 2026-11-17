@@ -1,3 +1,4 @@
 # Runtime export dependencies, verified locally with nbtlib 2.0.4 / NumPy 2.5.4.
 nbtlib>=2.0.4,<3
 numpy>=2.0,<3
+jsonschema>=4.23,<5

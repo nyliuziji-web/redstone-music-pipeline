@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 // Full-length operation uses bounded chunk windows for both maintenance and play.
 export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,lightModules}){
  const NS='nevada_full',OBJ='nv_full',N=info.bounds.length,SEG=256,segments=Math.ceil(N/SEG);
+ const cam=info.camera;
  const write=(name,lines)=>{const p=`${FN}/${name}.mcfunction`;fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,lines.join('\n')+'\n');};
  const set=b=>`setblock ${b.x} ${b.y} ${b.z} ${b.state}`;
  const snbt=v=>Array.isArray(v)?'['+v.map(snbt).join(',')+']':typeof v==='object'?'{'+Object.entries(v).map(([k,v])=>`${k}:${snbt(v)}`).join(',')+'}':typeof v==='boolean'?(v?'1b':'0b'):JSON.stringify(v);
@@ -26,7 +27,7 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
  fs.writeFileSync(`${PACK}/pack.mcmeta`,JSON.stringify({pack:{pack_format:48,description:'Nevada 全曲红石音乐：实体红石演奏、三刻平滑跟拍、分段复位'}},null,2));
  write('load',[
   `scoreboard objectives add ${OBJ} dummy`,
-  ...[['#voice',0,1,0],['#sustain',0,1,1],['#camDur',1,3,3]].map(([k,a,b,v])=>`execute unless score ${k} ${OBJ} matches ${a}..${b} run scoreboard players set ${k} ${OBJ} ${v}`),
+  ...[['#voice',0,1,0],['#sustain',0,1,1],['#camDur',1,3,cam.teleportDuration]].map(([k,a,b,v])=>`execute unless score ${k} ${OBJ} matches ${a}..${b} run scoreboard players set ${k} ${OBJ} ${v}`),
   `scoreboard players operation #camLead ${OBJ} = #camDur ${OBJ}`,`scoreboard players remove #camLead ${OBJ} 1`,
   `scoreboard players set #sixteen ${OBJ} 16`,
   `execute unless score #built ${OBJ} matches 1 run ${fun('uninitialized')}`,
@@ -104,10 +105,10 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   'tag @s add nv_full_view',`gamemode spectator ${viewer}`,'kill @e[type=minecraft:item_display,tag=nv_full_camera]',
   `execute store result storage ${NS}:camera duration int 1 run scoreboard players get #camDur ${OBJ}`,
   `${fun('camera/spawn')} with storage ${NS}:camera`,
-  `tp ${viewer} 37.5 110.88 48.5 0 0`,`scoreboard players set #busy ${OBJ} 1`,...readyWindow,
+  `tp ${viewer} ${cam.x} ${cam.eyeY-1.62} 48.5 0 0`,`scoreboard players set #busy ${OBJ} 1`,...readyWindow,
   `title ${viewer} actionbar {"text":"准备开始 · Nevada 完整版"}`,sch('wait_start',10),
   `spectate ${camera} @a[tag=nv_full_view,limit=1]`]);
- write('camera/spawn',['$summon minecraft:item_display 37.5 112.5 48.5 {Tags:["nv_full_camera"],teleport_duration:$(duration),view_range:0f,shadow_radius:0f}']);
+ write('camera/spawn',[`$summon minecraft:item_display ${cam.x} ${cam.eyeY} 48.5 {Tags:["nv_full_camera"],teleport_duration:$(duration),view_range:0f,shadow_radius:0f}`]);
  const waitStart=[];for(let x=0;x<80;x+=16)for(let z=0;z<192;z+=16)waitStart.push(`execute unless loaded ${x+8} 110 ${z+8} run scoreboard players add #pending ${OBJ} 1`);
  write('wait_start',[`scoreboard players set #pending ${OBJ} 0`,...waitStart,
   `execute if score #pending ${OBJ} matches 1.. run ${sch('wait_start',10)}`,
@@ -140,7 +141,7 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   `scoreboard players operation #z ${OBJ} += #z ${OBJ}`,`scoreboard players add #z ${OBJ} 137`,
   `execute store result storage ${NS}:camera z double 0.5 run scoreboard players get #z ${OBJ}`,
   `${fun('camera/teleport')} with storage ${NS}:camera`]);
- write('camera/teleport',[`$tp ${camera} 37.5 112.5 $(z) 0 0`]);
+ write('camera/teleport',[`$tp ${camera} ${cam.x} ${cam.eyeY} $(z) 0 0`]);
  write('finish',[say('FINISHED'),text('Nevada 全曲结束，正在复位轨道。','green'),fun('recover')]);
  for(const [name,player,value]of [['voice_harp','#voice',1],['voice_flute','#voice',0],['sustain','#sustain',1],['dry','#sustain',0]]){
   write(name,[`execute if score #busy ${OBJ} matches 0 run ${fun(`settings/request_${name}`)}`]);
@@ -161,7 +162,7 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   write('camera/bind',[`execute if score #busy ${OBJ} matches 1.. run spectate ${camera} @a[tag=nv_full_view,limit=1]`]);
   fs.appendFileSync(`${FN}/maintenance/begin.mcfunction`,`schedule clear ${NS}:camera/bind\n`);
   for(const [name,value]of [['fx_on',1],['fx_off',0]])write(name,[`execute if score #busy ${OBJ} matches 0 run scoreboard players set #fx ${OBJ} ${value}`,text(value?'粒子已开启。':'粒子已关闭。','aqua','@s')]);
-  write('p3_defaults',[`scoreboard players set #voice ${OBJ} 0`,`scoreboard players set #sustain ${OBJ} 1`,`scoreboard players set #camDur ${OBJ} 3`,`scoreboard players set #camLead ${OBJ} 2`,fun('recover')]);
+  write('p3_defaults',[`scoreboard players set #voice ${OBJ} 0`,`scoreboard players set #sustain ${OBJ} 1`,`scoreboard players set #camDur ${OBJ} ${cam.teleportDuration}`,`scoreboard players set #camLead ${OBJ} ${cam.targetLeadBlocks}`,fun('recover')]);
   write('fx_state',[
    `execute store result storage nevada_full:fx playing int 1 run scoreboard players get #busy ${OBJ}`,
    `execute store result storage nevada_full:fx enabled int 1 run scoreboard players get #fx ${OBJ}`,

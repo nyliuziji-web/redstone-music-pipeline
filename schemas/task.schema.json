@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Specialist task",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "role",
+    "mode",
+    "status",
+    "inputFingerprint",
+    "objective",
+    "allowedOutput",
+    "resultContract"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "enum": [
+        "producer",
+        "music",
+        "arrangement",
+        "sound",
+        "machine",
+        "stage",
+        "visuals",
+        "quality"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "review",
+        "music_import",
+        "arrangement",
+        "sound_profile",
+        "show_score",
+        "stage_module",
+        "engine_change"
+      ]
+    },
+    "status": {
+      "enum": [
+        "pending",
+        "claimed",
+        "completed"
+      ]
+    },
+    "inputFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allowedOutput": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resultContract": {
+      "type": "object"
+    }
+  }
+}

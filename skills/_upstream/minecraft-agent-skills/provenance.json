@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "snapshot": "LICENSE",
+      "url": "https://raw.githubusercontent.com/Jahrome907/minecraft-agent-skills/22d61ce6b7a0c5f215008824aa6b94ecc73f2a43/LICENSE",
+      "sha256": "a3d882344aa13bbf86a808766fd4d015c09aaa8949f1bf1cec1d0f3595d3cee6",
+      "upstreamPath": "LICENSE"
+    },
+    {
+      "snapshot": "minecraft-modding.txt",
+      "url": "https://raw.githubusercontent.com/Jahrome907/minecraft-agent-skills/22d61ce6b7a0c5f215008824aa6b94ecc73f2a43/.agents/skills/minecraft-modding/SKILL.md",
+      "sha256": "b44b29e97a49e4334072b2fb27d0d96669c7fe346b999a2a9345d39eb2fe18a6",
+      "upstreamPath": ".agents/skills/minecraft-modding/SKILL.md"
+    },
+    {
+      "snapshot": "minecraft-resource-pack.txt",
+      "url": "https://raw.githubusercontent.com/Jahrome907/minecraft-agent-skills/22d61ce6b7a0c5f215008824aa6b94ecc73f2a43/.agents/skills/minecraft-resource-pack/SKILL.md",
+      "sha256": "2ea4ba9ba115ed9441e8453546c9e0e54fc090c571562c67ba4f68a74c673fce",
+      "upstreamPath": ".agents/skills/minecraft-resource-pack/SKILL.md"
+    },
+    {
+      "snapshot": "minecraft-datapack.txt",
+      "url": "https://raw.githubusercontent.com/Jahrome907/minecraft-agent-skills/22d61ce6b7a0c5f215008824aa6b94ecc73f2a43/.agents/skills/minecraft-datapack/SKILL.md",
+      "sha256": "5460a09f49a33da8617353e774bb8b1a6be6428e6a3fc0470c66fa37c055f2ea",
+      "upstreamPath": ".agents/skills/minecraft-datapack/SKILL.md"
+    },
+    {
+      "snapshot": "minecraft-testing.txt",
+      "url": "https://raw.githubusercontent.com/Jahrome907/minecraft-agent-skills/22d61ce6b7a0c5f215008824aa6b94ecc73f2a43/.agents/skills/minecraft-testing/SKILL.md",
+      "sha256": "d01ca4609902e65ecdfb576539dd3247677ae794a9fd9c1f8e1aa3703a203b5a",
+      "upstreamPath": ".agents/skills/minecraft-testing/SKILL.md"
+    }
+  ],
+  "obtained": "2026-11-17",
+  "repository": "https://github.com/Jahrome907/minecraft-agent-skills",
+  "commit": "22d61ce6b7a0c5f215008824aa6b94ecc73f2a43",
+  "mode": "unaltered reference snapshots; not installed or automatically invoked",
+  "schemaVersion": 1,
+  "license": "MIT"
+}

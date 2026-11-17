@@ -9,7 +9,7 @@ import subprocess
 
 from .world import write_litematic, write_world
 
-DEPENDENCY_FILES = ['redstone_music/assets/controls.mjs','redstone_music/assets/layout.json','redstone_music/world.py','redstone_music/runtime.py']
+DEPENDENCY_FILES = ['redstone_music/assets/controls.mjs','redstone_music/assets/layout.json','redstone_music/world.py','redstone_music/runtime.py','redstone_music/stage_tools.py','redstone_music/_vendor/mcbuild_voxel.py']
 
 
 def fingerprint_inputs(ctx):
@@ -30,10 +30,35 @@ def fingerprint_inputs(ctx):
 def dump(path, data): Path(path).write_text(json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
 
 
-def compile_blocks(events, title, namespace, objective, decorate=True):
+def compile_blocks(events, title, namespace, objective, decorate=True, layout_config=None):
     candidates=events['candidates']; length=max(1,int(events['musicGT']))
     total=max(256,math.ceil((80+length+48)/16)*16)
     layout=json.loads((Path(__file__).parent/'assets/layout.json').read_text(encoding='utf-8'))
+    options=layout_config or {}
+    if not isinstance(options,dict) or not options.keys() <= {'families','camera'}:
+        raise ValueError('layout accepts families and camera only')
+    if 'families' in options:
+        replacements=options['families']
+        if not isinstance(replacements,list) or len({f.get('id') for f in replacements})!=len(replacements):
+            raise ValueError('Layout families require unique IDs')
+        known_ids={f['id'] for f in layout}
+        for f in replacements:
+            if not isinstance(f,dict) or not f.keys() <= {'id','x','y','label'} or f.get('id') not in known_ids:
+                raise ValueError('Unknown layout family or unsupported fields')
+            if any(type(f.get(k)) is not int or abs(f[k])>40 for k in ('x','y')):
+                raise ValueError('Family x/y offsets must be bounded integers')
+        changes={f['id']:f for f in replacements}
+        layout=[{**f,**changes.get(f['id'],{})} for f in layout]
+    camera={'x':37.5,'eyeY':112.5,'teleportDuration':3,'targetLeadBlocks':2,'speedBlocksPerSecond':20}
+    cam=options.get('camera',{})
+    if not isinstance(cam,dict) or not cam.keys() <= {'x','eyeY','teleportDuration'}:
+        raise ValueError('Camera accepts x, eyeY and teleportDuration; speed follows the physical clock')
+    camera.update(cam)
+    if (any(type(camera[k]) not in (int,float) or not math.isfinite(camera[k]) for k in ('x','eyeY'))
+            or not 2<=camera['x']<=77 or not 90<=camera['eyeY']<=131
+            or type(camera['teleportDuration']) is not int or camera['teleportDuration'] not in (1,2,3)):
+        raise ValueError('Camera outside supported template bounds or interpolation range')
+    camera['targetLeadBlocks']=camera['teleportDuration']-1
     known={f['id'] for f in layout}
     if any(e['family'] not in known for e in candidates):raise ValueError('Unsupported family in event IR; provide a family mapping')
     grid={};notes=[];heads=[];repeaters=[];lights=[];families=[]
@@ -127,17 +152,67 @@ def compile_blocks(events, title, namespace, objective, decorate=True):
         'origin':{'x':0,'y':88,'z':0},'bounds':{'width':80,'height':46,'length':total},
         'excerpt':{'startGT':events.get('sourceOffsetGT',0),'musicGT':length,'seconds':events['durationSeconds'],'sourceStartSeconds':events.get('sourceOffsetGT',0)/20,'sourceEndSeconds':events.get('sourceOffsetGT',0)/20+events['durationSeconds']},
         'fxSample':{'id':'full','key':5,'world':'Performance','title':title,'length':length,'cut':0},
-        'camera':{'x':37.5,'eyeY':112.5,'teleportDuration':3,'targetLeadBlocks':2,'speedBlocksPerSecond':20},
+        'camera':camera,
         'clock':{'musicBeginsAfterLaunchGT':70},'families':families,'noteEvents':len(notes),'onsets':sum(n['kind']!='retrigger' for n in notes),
         'retriggers':sum(n['kind']=='retrigger' for n in notes),'blocks':len(grid),'decorativeBlocks':decor,
         'claims':{'allMusicPhysicalRedstone':True,'runtimeVerified':False,'clientListening':False}}
     return info,list(grid.values()),notes,heads,repeaters,lights
 
 
+def merge_stage_module(info, blocks, notes, blueprint):
+    """Merge a bounded passive module without overwriting machine/camera cells."""
+    from .stage_tools import evaluate_blueprint
+    module, report = evaluate_blueprint(blueprint)
+    if not report['protected']:
+        raise ValueError('Stage module conflicts with its declared protection')
+    occupied = {(b['x'], b['y'], b['z']): b for b in blocks}
+    critical = {p for p, b in occupied.items() if any(t in b['state'] for t in
+                ('repeater', 'wire', 'observer', 'piston', 'torch', 'note_block', 'command_block', 'button'))}
+    note_cells = {(n['x'], n['y'] + dy, n['z']) for n in notes for dy in (-1, 0, 1)}
+    camera = info['camera']
+    conflicts = []
+    # Declarative decoration cannot install active circuits, moving/falling blocks or fluids.
+    forbidden = ('redstone', 'piston', 'observer', 'repeater', 'comparator', 'command_block',
+                 'water', 'lava', 'sand', 'gravel', 'concrete_powder', 'tnt', 'sculk', 'fire',
+                 'note_block', 'torch', 'button', 'pressure_plate', 'tripwire', 'lever')
+    added = []
+    for b in module:
+        x, y, z = p = tuple(b['pos'])
+        state = b['block']
+        name = state.split('[', 1)[0].split(':', 1)[-1]
+        if any(t in name for t in forbidden) or 'waterlogged=true' in state:
+            raise ValueError(f'Stage module contains unsupported active/unstable block: {state}')
+        nearby = any((x+dx,y+dy,z+dz) in critical for dx in range(-2,3)
+                     for dy in range(-2,3) for dz in range(-2,3))
+        in_camera = abs(x-camera['x']) <= 2 and abs(y-camera['eyeY']) <= 2 and 64 <= z <= 82+info['excerpt']['musicGT']
+        if p in occupied or p in note_cells or nearby or in_camera:
+            conflicts.append(p)
+        added.append({'x': x, 'y': y, 'z': z, 'state': state})
+    if conflicts:
+        raise ValueError(f'Stage module violates machine/camera clearance: {conflicts[:8]}')
+    combined = blocks + added
+    lo = {k: min(info['origin'][k], min(b[k] for b in added)) for k in ('x','y','z')}
+    hi = {k: max(info['origin'][k]+info['bounds'][size]-1, max(b[k] for b in added))
+          for k,size in zip(('x','y','z'),('width','height','length'))}
+    bounds = {size: hi[k]-lo[k]+1 for k,size in zip(('x','y','z'),('width','height','length'))}
+    if lo['y'] < -64 or hi['y'] > 319 or bounds['width'] > 256 or bounds['height'] > 192 or math.prod(bounds.values()) > 32_000_000:
+        raise ValueError('Merged stage exceeds bounded world/schematic volume')
+    info.update(origin=lo,bounds=bounds,blocks=len(combined),
+                decorativeBlocks=info['decorativeBlocks']+len(added),
+                stageModule={'blockCount':len(added),'sourceSha256':report['sourceSha256'],
+                             'clearanceChecked':True,'physicsVerified':False})
+    return combined, report
+
+
 def run(ctx):
     out=Path(ctx['out']);config=ctx['config'];events=json.loads((Path(ctx['deps']['sound'])/'events.json').read_text(encoding='utf-8'))
     slug=config['slug'];namespace='rm_'+slug;objective='rm_'+hashlib.sha256(slug.encode()).hexdigest()[:8]
-    info,blocks,notes,heads,repeaters,lights=compile_blocks(events,config.get('title',slug),namespace,objective,config.get('machine',{}).get('decorate',True))
+    info,blocks,notes,heads,repeaters,lights=compile_blocks(events,config.get('title',slug),namespace,objective,config.get('machine',{}).get('decorate',True),config.get('layout'))
+    stage=config.get('inputs',{}).get('stageModule')
+    if stage:
+        p=Path(stage);p=p if p.is_absolute() else Path(ctx['project'])/p
+        blocks,stage_report=merge_stage_module(info,blocks,notes,json.loads(p.read_text(encoding='utf-8')))
+        dump(out/'stage_module_report.json',stage_report)
     for name,data in [('expected_events.json',{'info':info,'notes':notes}),('placed_blocks.json',{'info':info,'blocks':blocks}),('build_manifest.json',info),('light_modules.json',lights)]:dump(out/name,data)
     pack=out/'helper';pack.mkdir();args={'OUT':str(out),'PACK':str(pack),'FN':str(pack/'data/nevada_full/function'),
         'info':info,'blocks':blocks,'notes':notes,'heads':heads,'resetRepeaters':repeaters,'lightModules':lights}

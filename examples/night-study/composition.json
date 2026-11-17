@@ -1,0 +1,63 @@
+{
+  "title": "Moon Traces / 窗外月迹",
+  "original": true,
+  "externalAssets": [],
+  "tempoBpm": 72,
+  "bars": 12,
+  "meter": "4/4",
+  "nominalSeconds": 40,
+  "sections": [
+    {
+      "name": "Theme in the window",
+      "bars": [
+        1,
+        4
+      ],
+      "seconds": [
+        0,
+        13.333328
+      ]
+    },
+    {
+      "name": "Moon rises, answer brightens",
+      "bars": [
+        5,
+        8
+      ],
+      "seconds": [
+        13.333328,
+        26.666656
+      ]
+    },
+    {
+      "name": "The room falls quiet",
+      "bars": [
+        9,
+        12
+      ],
+      "seconds": [
+        26.666656,
+        40
+      ]
+    }
+  ],
+  "roles": {
+    "theme_attack": "D-A-G-E motif, upper development, lowered coda",
+    "sub_bass": "single roots, no pulse train",
+    "chords": "six sparse open pairs",
+    "answer": "six quiet replies in melodic gaps"
+  },
+  "noteCounts": {
+    "theme": 26,
+    "sub": 12,
+    "chords": 12,
+    "answer": 6
+  },
+  "creativeChoices": [
+    "No drums: time is carried by phrases and bass changes",
+    "Development lifts register and slightly increases density",
+    "Final D and open fifth are followed by notated silence"
+  ],
+  "listeningVerified": false,
+  "artisticApproval": false
+}
