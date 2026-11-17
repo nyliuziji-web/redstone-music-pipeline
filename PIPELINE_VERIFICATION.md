@@ -13,4 +13,4 @@ Newly generated client rendering, subjective listening, screen recording and pub
 
 Public source contains no reference recordings, commercial song MIDI, sample packs, textures/shaders, Minecraft binaries, personal profiles or local runtime configuration. The original synthetic demo composition is CC0; source code is MIT.
 
-GitHub upload was not completed because account/repository creation could not be reached from the available browser/CLI connection. The local source repository and source ZIP are ready for later publication.
+Source repository publication is tracked separately from the technical tests above. Publishing source code does not establish video recording, artistic approval or game-client verification.
