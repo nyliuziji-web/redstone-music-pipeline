@@ -188,7 +188,7 @@ class QualityReleaseTests(unittest.TestCase):
         deps = {name: song / name for name in ("music", "sound", "machine", "visuals", "validate")}
         for path in deps.values():
             path.mkdir()
-        config = {"slug": "integration", "title": "Original Phrase", "inputs": {"midi": "original.mid"}, "sound": {"profile": "vanilla", "retrigger": True}, "visuals": {"enabled": False}}
+        config = {"slug": "integration", "title": 'Original "Phrase"', "inputs": {"midi": "original.mid"}, "sound": {"profile": "vanilla", "retrigger": True}, "visuals": {"enabled": False}}
         context = {"project": str(song), "root": str(Path(__file__).resolve().parents[1]), "config": config, "deps": {key: str(value) for key, value in deps.items()}}
         for name, module in (("music", music), ("sound", sound), ("machine", machine), ("validate", validate), ("release", release)):
             destination = song / name
@@ -198,6 +198,14 @@ class QualityReleaseTests(unittest.TestCase):
         self.assertEqual(report["counts"]["physicalEvents"], 10)
         self.assertTrue(report["exports"]["worldRoundtripPassed"])
         self.assertFalse(report["runtime"]["serverVerified"])
+        info = validate.read(song / "machine/build_manifest.json")
+        functions = song / "machine/helper/data" / info["namespace"] / "function"
+        self.assertIn('subtitles int 1', (functions / 'fx_state.mcfunction').read_text(encoding='utf-8'))
+        self.assertIn('#sub ' + info['objective'] + ' 1', (functions / 'scene/subtitles_on.mcfunction').read_text(encoding='utf-8'))
+        for path in functions.rglob('*.mcfunction'):
+            for line in path.read_text(encoding='utf-8').splitlines():
+                if 'tellraw @a ' in line:
+                    json.loads(line.split('tellraw @a ', 1)[1])
         with zipfile.ZipFile(song / "release/deliverables.zip") as archive:
             for member in archive.namelist():
                 if member.endswith((".json", ".md", ".mcfunction", ".mcmeta")):

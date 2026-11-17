@@ -150,7 +150,14 @@ def run(ctx):
     (pack/'data/nevada_full').rename(pack/'data'/namespace)
     load=pack/'data'/namespace/'function/load.mcfunction';text=load.read_text(encoding='utf-8').splitlines()
     text.insert(1,f'execute unless score #built {objective} matches 1 run scoreboard players set #built {objective} 1')
+    text.append(f'execute unless score #sub {objective} matches 0..1 run scoreboard players set #sub {objective} 1')
     load.write_text('\n'.join(text)+'\n',encoding='utf-8')
+    state_file=pack/'data'/namespace/'function/fx_state.mcfunction'
+    with state_file.open('a',encoding='utf-8') as stream:
+        stream.write(f'execute store result storage {namespace}:fx subtitles int 1 run scoreboard players get #sub {objective}\n')
+    scene=pack/'data'/namespace/'function/scene';scene.mkdir()
+    for name,value in [('subtitles_on',1),('subtitles_off',0)]:
+        (scene/(name+'.mcfunction')).write_text(f'scoreboard players set #sub {objective} {value}\n',encoding='utf-8')
     rounds={'schematic':write_litematic(out/'performance.litematic',blocks,info),'world':write_world(out/'world',blocks,info)}
     shutil.copytree(pack,out/'world/datapacks/helper')
     sound=Path(ctx['deps']['sound'])/'resources.zip'
