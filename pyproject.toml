@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=77,<82", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redstone-music-pipeline"
+version = "0.1.0"
+description = "Resumable MIDI-to-Minecraft note-block production with constrained agent handoffs"
+readme = "PIPELINE.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY.md"]
+authors = [{name = "Redstone Music Pipeline contributors"}]
+dependencies = ["nbtlib>=2.0.4,<3", "numpy>=2.0,<3"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Sound/Audio :: MIDI",
+]
+
+[project.scripts]
+redstone-music = "redstone_music.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["redstone_music*"]
+exclude = ["tests*", "projects*", "nevada*"]
+
+[tool.setuptools.package-data]
+redstone_music = ["assets/*.mjs", "assets/*.json", "assets/*.java"]

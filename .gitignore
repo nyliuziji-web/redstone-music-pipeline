@@ -1,0 +1,45 @@
+# Private production data and local runtime
+/.runtime/
+/nevada/
+/research/
+/projects/
+/project/
+/artifacts/
+/.staging/
+/opensource/
+/outputs/
+/output/
+/captures/
+/capture/
+/publish/
+
+# Local environments and Python build products
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Credentials, editor state and runtime debris
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.part
+session.lock
+.idea/
+.vscode/
+node_modules/
