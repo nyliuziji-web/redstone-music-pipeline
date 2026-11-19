@@ -9,7 +9,9 @@ description: 为红石音乐制作和校准专用单音样本、声音槽、资�
 
 使用[声音制作教程](references/guide.md)。冻结输入，明确样本来源、根音、包络、增益、声音事件与基底。角色需要独立调整时分配独立槽，避免全局替换连带影响。
 
-`build-soundpack`制作、解码并检查文件；`render-preview`与`compare-candidates`生成可比声音。一次只改变能解释的变量，保留原始相对平衡及未匹配响度版本。
+先用`design-timbre`制作可调单音，或`build-palette`把角色配方烘焙成独立槽位与资源包；`audit-palette`实测25格变速音高候选/尾音，并定位持续不足或重叠疑点。`compare-timbres`保持同谱同决策，交付三组音体方向与相同混音增益的独奏。没有操作者明确提供的原版单音时，native候选是原创MC-inspired，不能称原版Minecraft声音。
+
+`build-soundpack`仍可导入已有合格样本；需要等响度视图时另用`compare-candidates`，保留上述同增益原文件。一次只改变可解释的变量。先跑`examples/timbre-study/`的单音/20秒练习，再做用户曲目的代表段。
 
 采样随音高变速，长度也改变；note-off、velocity和SF2循环不能自动延伸为音符盒能力。最终profile与机器映射、期望事件和实际启用包绑定同一版本。
 

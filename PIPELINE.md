@@ -56,7 +56,7 @@ The main agent owns the goal, configuration, schedule and acceptance decisions. 
 With no music input, the conductor creates a music-production task instead of inventing a complete song or marking the stage complete:
 
 ```shell
-python -m redstone_music init projects/new-song --title "New song"
+python -m redstone_music init projects/new-song --title "New song" --reference-audio path/to/reference.mp3
 python -m redstone_music run projects/new-song
 python -m redstone_music tasks projects/new-song
 ```

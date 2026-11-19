@@ -5,3 +5,4 @@ client/gradlew text eol=lf
 *.mid binary
 skills/_upstream/** -text
 redstone_music/_vendor/** -text
+integrations/music-skill/** -text

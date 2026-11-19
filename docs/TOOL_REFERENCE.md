@@ -11,10 +11,15 @@
 | `analyze-audio SOURCE [--out FILE]` | librosa 能量、色度、起音与 tempo 候选；不是已听过作品 |
 | `transcribe-melody SOURCE --out DIR` | SwiftF0 本地单旋律候选 MIDI、逐帧音高/置信度，需音乐校对 |
 | `edit-music-region MIDI --patch FILE --out MIDI` | 绑定母版哈希与时间区间，修改指定音符；验证其他音符和控制事件不变 |
-| `plan-noteblocks SOURCE --out DIR [--profile FILE]` | 乐句适配、公开移调与选槽决策，生成 events.json / adaptation_plan.json |
+| `audio capabilities/transcribe/beats/separate/compare …` | 本机后端检查、可核对原始输出的转写/分轨/节拍候选、同一时间轴试听 |
+| `composition import/revise/export/review/render/study/voicelead …` | 冻结可信主题，写局部音符、声部和段落，听实际音源的独奏和混合 |
+| `plan-noteblocks SOURCE --out DIR [--profile FILE] [--consistency role\|phrase] [--adaptation-plan FILE]` | 默认整条声部统一声音；报告选槽和移调，产出 events.json / adaptation_plan.json |
+| `design-timbre RECIPE --out DIR` / `build-palette SPEC --out DIR` | 调整起音、音体、根音与包络，生成采样和可进入实体编配的声音包 |
+| `audit-palette PROFILE [--events FILE] [--out FILE]` | 测全部 25 格变速音高和尾音，定位持续和重叠疑点 |
+| `compare-timbres SOURCE --palette FILE --out DIR` / `timbre-study NEW_DIR` | 固定 MIDI 和事件决策，对照三种配方与同增益独奏 |
 | `build-soundpack SPEC --out DIR` | 原创合成或显式提供的采样，生成 profile、样本、校准报告、resources.zip |
 | `calibrate-profile PROFILE [--out FILE]` | 实际解码、频谱中心候选与声明根音比较；噪声/复杂采样仍需听审 |
-| `render-preview SOURCE --out WAV --mode reference|gm|noteblock [--profile FILE] [--soundfont FILE] [--begin S] [--end S]` | 参考结构音、真实 SoundFont 或校准采样近似；报告尾音/公共增益/削波；不是游戏录音 |
+| `render-preview SOURCE --out WAV --mode MODE [--profile FILE] [--soundfont FILE] [--fluidsynth PATH] [--begin S] [--end S]` | 结构参考、真实 SoundFont 或音符盒采样预听。GM 可用 FluidSynth 或 TinySoundFont |
 | `compare-candidates A B --out DIR` | FFmpeg 实测响度、共同目标的 A/B，不分别归一化同一混音中的声部 |
 
 学习素材与失败练习用 `learn NEW_DIR` 生成。声音 spec 示例在 `templates/soundpack.example.json`；完整音色/延音方法见 sound-designer / noteblock-arranger Skill。

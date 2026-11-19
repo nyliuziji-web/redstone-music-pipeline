@@ -32,6 +32,8 @@ python run_pipeline.py learn projects/lesson
 
 只给网址时，先取得并检查实际文件；网页描述不能作为已听到原曲、已拿到乐谱的证据。
 
+接手只有 MP3 的作品时，运行 `init PROJECT --reference-audio SOURCE.mp3`，按[本机音频后端](integrations/transcription/README.md)先制作代表段。按录音的有效时间轴比原曲与重建，经校正后再准备全曲音乐任务交付。可信旋律和缺失伴奏可从 `composition study` 学习冻结主题与变换织体。进入音符盒制作用 `timbre-study` 练习同谱异音色和长音策略。
+
 ## 建立作品并推进
 
 ```shell

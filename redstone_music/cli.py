@@ -15,6 +15,7 @@ def main(argv=None):
     init.add_argument("--slug")
     init.add_argument("--midi")
     init.add_argument("--approved-events")
+    init.add_argument("--reference-audio", help="Local reference recording for the music task")
     run = sub.add_parser("run", help="Build or resume the pipeline")
     run.add_argument("project")
     run.add_argument("--until", choices=STAGES, default="release")
@@ -58,12 +59,16 @@ def main(argv=None):
     p.add_argument('source'); p.add_argument('--patch', required=True); p.add_argument('--out', required=True)
     p = sub.add_parser('plan-noteblocks')
     p.add_argument('source'); p.add_argument('--out', required=True); p.add_argument('--profile')
+    p.add_argument('--adaptation-plan', help='Apply explicit reviewed note-to-slot decisions')
+    p.add_argument('--consistency', choices=('role', 'phrase'), default='role')
     p = sub.add_parser('build-soundpack')
     p.add_argument('spec'); p.add_argument('--out', required=True)
     p = sub.add_parser('render-preview')
     p.add_argument('source'); p.add_argument('--out', required=True)
     p.add_argument('--mode', choices=('reference', 'gm', 'noteblock'), default='reference')
     p.add_argument('--soundfont'); p.add_argument('--profile')
+    from .music_cli import add_music_commands, add_renderer_options
+    add_renderer_options(p)
     p.add_argument('--begin', type=float, default=0); p.add_argument('--end', type=float)
     p = sub.add_parser('compare-candidates')
     p.add_argument('a'); p.add_argument('b'); p.add_argument('--out', required=True)
@@ -89,9 +94,12 @@ def main(argv=None):
     p = sub.add_parser('clip-media'); p.add_argument('source'); p.add_argument('--out',required=True); p.add_argument('--begin',required=True,type=float); p.add_argument('--end',required=True,type=float)
     p = sub.add_parser('capture-evidence'); p.add_argument('project'); p.add_argument('source'); p.add_argument('--out',required=True); p.add_argument('--kind',choices=('sample','full'),default='sample')
     p = sub.add_parser('photon-plan'); p.add_argument('show'); p.add_argument('--out',required=True); p.add_argument('--mod-jar',required=True)
+    add_music_commands(sub)
     args = parser.parse_args(argv)
     try:
-        if args.command == 'capabilities':
+        if hasattr(args, '_music_action'):
+            result = args._music_action(args)
+        elif args.command == 'capabilities':
             from .kit import capabilities
             result = capabilities(args.project, args.probe)
         elif args.command == 'calibrate-profile':
@@ -118,9 +126,10 @@ def main(argv=None):
             elif args.command == 'analyze-audio': result = mt.analyze_audio(args.source, args.out)
             elif args.command == 'transcribe-melody': result = mt.transcribe_melody(args.source, args.out)
             elif args.command == 'edit-music-region': result = mt.edit_music_region(args.source, args.patch, args.out)
-            elif args.command == 'plan-noteblocks': result = mt.plan_noteblocks(args.source, args.out, args.profile)
+            elif args.command == 'plan-noteblocks': result = mt.plan_noteblocks(
+                args.source, args.out, args.profile, args.adaptation_plan, args.consistency)
             elif args.command == 'build-soundpack': result = mt.build_soundpack(args.spec, args.out)
-            elif args.command == 'render-preview': result = mt.render_preview(args.source, args.out, args.mode, args.soundfont, args.profile, args.begin, args.end)
+            elif args.command == 'render-preview': result = mt.render_preview(args.source, args.out, args.mode, args.soundfont, args.profile, args.begin, args.end, args.gm_engine, args.fluidsynth)
             else: result = mt.compare_candidates(args.a, args.b, args.out)
         elif args.command in ('preview-stage', 'compile-show'):
             from . import stage_tools as st
@@ -145,7 +154,7 @@ def main(argv=None):
             from .trace import build
             result = build(args.jdk, args.asm, args.out)
         elif args.command == "init":
-            result = initialize(args.project, args.title, args.midi, args.approved_events, args.slug)
+            result = initialize(args.project, args.title, args.midi, args.approved_events, args.slug, args.reference_audio)
         elif args.command == "run":
             result = summarize_run(args.project, run_pipeline(args.project, args.until, args.force))
         elif args.command == 'demo':

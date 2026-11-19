@@ -131,7 +131,7 @@ def load_config(project):
     return config
 
 
-def initialize(project, title=None, midi=None, approved_events=None, slug=None):
+def initialize(project, title=None, midi=None, approved_events=None, slug=None, reference_audio=None):
     project = Path(project).resolve()
     slug = slug or project.name
     validate_slug(slug)
@@ -141,15 +141,16 @@ def initialize(project, title=None, midi=None, approved_events=None, slug=None):
         "schemaVersion": 1, "slug": slug, "title": title or slug,
         "inputs": {"midi": str(Path(midi).resolve()) if midi else None,
                    "approvedEvents": str(Path(approved_events).resolve()) if approved_events else None,
-                   "referenceAudio": None, "soundPack": None, "captions": None,
+                   "referenceAudio": str(Path(reference_audio).resolve()) if reference_audio else None,
+                   "soundPack": None, "captions": None,
                    "soundProfile": None, "adaptationPlan": None, "stageModule": None, "showScore": None},
-        "sound": {"retrigger": True, "profile": "vanilla"},
+        "sound": {"retrigger": True, "profile": "vanilla", "adapter":"role-consistent", "consistency":"role"},
         "machine": {"decorate": True}, "visuals": {"enabled": True},
         "runtime": {"serverValidation": False, "java": None, "serverJar": None,
                     "traceAgent": None, "acceptEula": False},
         "policy": {"maxAttempts": 2, "maxDurationSeconds": 900, "maxNotes": 50000, "maxInputMiB": 256},
     }
-    for key in ("midi", "approvedEvents"):
+    for key in ("midi", "approvedEvents", "referenceAudio"):
         if config["inputs"][key] and not Path(config["inputs"][key]).is_file():
             raise PipelineError(f"Missing {key} input")
     project.mkdir(parents=True, exist_ok=False)
@@ -523,7 +524,7 @@ def complete_task(project, task_id, result):
         for domain, values in patch.items():
             if not isinstance(values, dict):
                 raise PipelineError("Configuration domains must be objects")
-            supported = {'music': {}, 'sound': {'profile': str, 'retrigger': bool},
+            supported = {'music': {}, 'sound': {'profile': str, 'retrigger': bool, 'adapter':str, 'consistency':str},
                          'machine': {'decorate': bool}, 'layout': {'families': list, 'camera': dict}, 'visuals': {'enabled': bool},
                          'validation': {}, 'runtime': {'serverValidation': bool, 'timeoutSeconds': int}}[domain]
             if not values.keys() <= supported.keys():

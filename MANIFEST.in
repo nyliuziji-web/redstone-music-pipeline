@@ -8,7 +8,7 @@ recursive-include docs *.md *.json
 recursive-include examples *.mid *.json *.md *.py
 include client/gradlew
 recursive-include client *.java *.gradle *.properties *.json *.md *.sh *.bat *.jar *.txt
-recursive-include integrations *.json *.md *.txt LICENSE*
+recursive-include integrations *.json *.md *.txt *.py LICENSE*
 global-exclude *.pyc
 prune client/build
 prune client/.gradle

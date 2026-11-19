@@ -51,7 +51,17 @@ python run_pipeline.py game build-client client --out projects/client-build --ja
 
 ## 声音资源
 
-GM试听显式指定可用SF2/SF3与独立许可；本项目不依赖旧机器的`pretty_midi`附带音源。首次加载要检查程序音色、鼓组、踏板、尾音和解码支持。更换音源会改变平衡，应记录试听音源hash。
+GM 试听使用显式指定的 SoundFont，本项目以 SF2 实测。首次加载要检查程序音色、鼓组、踏板和尾音。生产依赖可直接安装；GM 支持独立 FluidSynth 程序，也可另装 `.[render-tiny]` 使用 TinySoundFont。Windows 上如果后者缺 wheel 或要求 C 编译器，使用 FluidSynth 预编译版。
+
+- Windows x64 可解压到作品外的自管工具目录。验证过 [FluidSynth 2.6.2 Win10 x64 cpp11](https://github.com/FluidSynth/fluidsynth/releases/download/v2.6.2/fluidsynth-v2.6.2-win10-x64-cpp11.zip)，ZIP SHA-256 为 `808295345d43c9c428f3fa87d29fbf97a9926f356df95559ff2689f3bd4072d7`。保留 bin 下的配套 DLL。
+- Linux 可以使用发行版的 FluidSynth 命令。已在 PATH 时，`--gm-engine fluidsynth` 即可选择它。
+- 可用音源为 [GeneralUser GS 的固定版本](https://github.com/mrbumpy409/GeneralUser-GS/tree/684543d5e5efaef08d02be50dcda8d552478fa60)，`GeneralUser-GS.sf2` SHA-256 为 `9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe`。保留上游独立许可证。此音源供 GM 试听，游戏采样另选来源。
+
+```shell
+python run_pipeline.py render-preview examples/demo.mid --out work/gm.wav --mode gm --soundfont work/GeneralUser-GS.sf2 --fluidsynth work/FluidSynth/bin/fluidsynth.exe
+```
+
+转写环境按[本机音频后端](../integrations/transcription/README.md)单独配置。报告 `audio capabilities` 用于检查包和解释器。模型是否已成功运行以实际候选和运行记录为准。
 
 音符盒模式使用profile中声明的单音样本；样本根音、声音事件、基底和方块note共同决定实际音高。MC原版资源从合法本地实例取得，第三方音源按各自条款使用；原创学习样本单独声明来源。
 

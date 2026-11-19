@@ -553,15 +553,18 @@ def validate_soundpack(soundpack, profile):
             'sha256': _hash(soundpack), 'clientVerified': False}
 
 
-def plan_noteblocks(source, out=None, profile=None, adaptation_plan=None):
+def plan_noteblocks(source, out=None, profile=None, adaptation_plan=None, consistency='role'):
     """Plan one calibrated timbre per role/phrase, never silently fold each note."""
     from .sound import TONAL, DRUMS, PREFER
+    if consistency not in ('role','phrase'):
+        raise ValueError('consistency must be role or phrase; per-note timbre fallback is not supported')
     score = _score(source)
     if profile is None:
         value = {'schemaVersion': 1, 'id': 'vanilla', 'roles': {}, 'slots': {i: {'instrument': i, 'baseBlock': b, 'rootMidi': low + 12, 'gain': 1, 'sustain': {'mode': 'natural'}} for i, low, b in TONAL}}
         for family, (instrument, base, note) in DRUMS.items():
             value['slots'].setdefault(instrument, {'instrument': instrument, 'baseBlock': base, 'rootMidi': 66, 'gain': 1, 'sustain': {'mode': 'natural'}})
             value['roles'][family] = instrument
+        value['_builtinVanillaTuning']={family:note for family,(_,_,note) in DRUMS.items()}
         root = Path.cwd()
     else:
         value, root = _profile(profile)
@@ -573,11 +576,15 @@ def plan_noteblocks(source, out=None, profile=None, adaptation_plan=None):
                        'phase': half_up(n['sourceStartSeconds'] * 20) % 2, 'kind': 'onset'} for n in score['notes']]
     for family, all_notes in (sorted(groups.items()) if adaptation_plan is None else []):
         all_notes.sort(key=lambda n: (n['sourceStartSeconds'], n['id']))
-        phrases = []
-        for n in all_notes:
-            if not phrases or n['sourceStartSeconds'] - max(x['sourceEndSeconds'] for x in phrases[-1]) > .4:
-                phrases.append([])
-            phrases[-1].append(n)
+        # A short rest is not evidence that the melodic instrument should change.
+        # Default to one identity and register for the complete role. Explicit
+        # phrase mode remains available for deliberately reviewed orchestration.
+        phrases = [all_notes] if consistency == 'role' else []
+        if consistency == 'phrase':
+            for n in all_notes:
+                if not phrases or n['sourceStartSeconds'] - max(x['sourceEndSeconds'] for x in phrases[-1]) > .4:
+                    phrases.append([])
+                phrases[-1].append(n)
         for pi, notes in enumerate(phrases):
             is_drum = family in DRUMS
             fixed = value.get('roles', {}).get(family)
@@ -589,14 +596,19 @@ def plan_noteblocks(source, out=None, profile=None, adaptation_plan=None):
                     if is_drum or all(0 <= n['sourceMidi'] + shift - slot['rootMidi'] + 12 <= 24 for n in notes):
                         possible.append((abs(shift), slot['instrument'] != PREFER.get(family, 'harp'), slot_id, shift))
             if not possible:
-                raise ValueError(f'Phrase {family}/{pi} cannot fit one slot; split the role or revise the phrase explicitly')
+                low=min(n['sourceMidi'] for n in notes); high=max(n['sourceMidi'] for n in notes)
+                root=max(12,min(115,half_up((low+high)/2)))
+                remedy=(f'create a calibrated sample with rootMidi={root} (25-key window {root-12}..{root+12})'
+                        if high-low<=24 else 'design explicit sample zones or revoice the role; one slot spans only 24 semitones')
+                raise ValueError(f'{consistency.capitalize()} {family}/{pi}, MIDI {low}..{high}, cannot fit one consistent slot; {remedy}. '
+                                 'Do not fold individual source notes or alternate instruments to hide the range problem')
             _, _, slot_id, shift = min(possible)
             slot = value['slots'][slot_id]
             decisions.append({'role': family, 'phrase': pi, 'slot': slot_id, 'transpose': shift, 'noteIds': [n['id'] for n in notes],
                               'beginSeconds': notes[0]['sourceStartSeconds'], 'endSeconds': max(n['sourceEndSeconds'] for n in notes)})
             for n in notes:
                 gt = half_up(n['sourceStartSeconds'] * 20)
-                tuning = 12 if is_drum else n['sourceMidi'] + shift - slot['rootMidi'] + 12
+                tuning = (DRUMS[family][2] if profile is None else 12) if is_drum else n['sourceMidi'] + shift - slot['rootMidi'] + 12
                 event = {**n, 'gt': gt, 'phase': gt % 2, 'kind': 'onset', 'slot': slot_id, 'note': tuning,
                          'instrument': slot['instrument'], 'baseBlock': slot['baseBlock'], 'transpose': shift,
                          'mappedMidi': n['sourceMidi'] + shift, 'gainProxy': n.get('velocity', 90) / 127,
@@ -608,12 +620,17 @@ def plan_noteblocks(source, out=None, profile=None, adaptation_plan=None):
                         candidates.append({**event, 'id': n['id'] + '_r' + str(i), 'kind': 'retrigger', 'gt': t, 'phase': t % 2})
     candidates.sort(key=lambda n: (n['gt'], n['id']))
     result = {'schemaVersion': 1, 'sourceMidiSha256': score.get('sourceMidiSha256'), 'durationSeconds': score['durationSeconds'],
-              'sourceOffsetGT': 0, 'musicGT': math.ceil(score['durationSeconds'] * 20), 'candidates': candidates, 'merged': [],
+              'sourceOffsetGT': score.get('sourceOffsetGT',0), 'musicGT': math.ceil(score['durationSeconds'] * 20), 'candidates': candidates, 'merged': [],
               'profileId': value['id'], 'phraseDecisions': decisions, 'listeningVerified': False,
+              'consistency':consistency,
               'limitations': ['MIDI note-off and velocity do not directly control vanilla sample playback',
                               'Phrase consistency and measurements do not establish artistic quality']}
     if adaptation_plan is not None:
         result = apply_adaptation_plan(result, adaptation_plan, value)
+    cut=result['sourceOffsetGT']
+    for n in result['candidates']:
+        if cut:n['q']=n['gt']-cut
+    result['musicGT']=max(result['musicGT'],max((n['gt']-cut+1 for n in result['candidates']),default=1))
     if out is not None:
         folder = _new_dir(out)
         _write(folder / 'events.json', result)
@@ -652,7 +669,7 @@ def apply_adaptation_plan(planned, adaptation_plan, profile):
             note = original[ident]
             if note['family'] != role:
                 raise ValueError('Adaptation role disagrees with source note')
-            tuning = 12 if role in DRUMS else note['sourceMidi'] + shift - slot['rootMidi'] + 12
+            tuning = profile.get('_builtinVanillaTuning',{}).get(role,12) if role in DRUMS else note['sourceMidi'] + shift - slot['rootMidi'] + 12
             if not 0 <= tuning <= 24:
                 raise ValueError('Adaptation choice puts source pitch outside calibrated slot')
             event = {**note, 'slot': slot_id, 'transpose': shift, 'mappedMidi': note['sourceMidi'] + shift,
@@ -802,7 +819,8 @@ def build_soundpack(spec, out):
             'calibration': str(folder / 'calibration.json'), 'slots': len(rows), 'clientVerified': False, 'listeningVerified': False}
 
 
-def render_preview(source, out, mode='reference', soundfont=None, profile=None, begin=0, end=None):
+def render_preview(source, out, mode='reference', soundfont=None, profile=None, begin=0, end=None,
+                   gm_engine='auto', fluidsynth=None, extend_interval=False):
     """Render honest audition media. Reference synth is original, never called Minecraft audio."""
     import numpy as np
     import soundfile as sf
@@ -824,7 +842,7 @@ def render_preview(source, out, mode='reference', soundfont=None, profile=None, 
         score = _score(source)
         notes, duration = score['notes'], float(score['durationSeconds'])
     end = duration if end is None else _finite(end, 'end', 0)
-    if end <= begin or end > duration + .001 or end - begin > 900:
+    if end <= begin or (end > duration + .001 and not extend_interval) or end > 900:
         raise ValueError('Invalid preview interval or >900 second preview')
     # Render from zero including pre-roll history before cropping. This preserves
     # notes and sample tails already sounding when a requested excerpt begins.
@@ -832,44 +850,8 @@ def render_preview(source, out, mode='reference', soundfont=None, profile=None, 
     if mode == 'gm':
         if not soundfont or not Path(soundfont).is_file() or not isinstance(source, (str, Path)):
             raise ValueError('GM preview needs a real MIDI path and supplied SoundFont')
-        import mido
-        import tinysoundfont
-        synth = tinysoundfont.Synth(gain=-8, samplerate=rate)
-        bank = synth.sfload(str(soundfont), max_voices=256)
-        for ch in range(16):
-            synth.program_select(ch, bank, 0, 0, is_drums=ch == 9)
-        cursor, elapsed = 0, 0.
-        active_keys = set()
-        music_end = round(end * rate)
-        for message in mido.MidiFile(source):
-            elapsed += message.time
-            target = min(music_end, round(elapsed * rate))
-            if target > cursor:
-                audio[cursor:target] = np.frombuffer(synth.generate_simple(target - cursor), dtype=np.float32).reshape(-1, 2)
-                cursor = target
-            if cursor == music_end:
-                break
-            if message.is_meta:
-                continue
-            if message.type == 'program_change':
-                synth.program_change(message.channel, message.program, is_drums=message.channel == 9)
-            elif message.type == 'control_change':
-                synth.control_change(message.channel, message.control, message.value)
-            elif message.type == 'note_on' and message.velocity:
-                synth.noteon(message.channel, message.note, message.velocity)
-                active_keys.add((message.channel, message.note))
-            elif message.type in ('note_on', 'note_off'):
-                synth.noteoff(message.channel, message.note)
-                active_keys.discard((message.channel, message.note))
-            elif message.type == 'pitchwheel':
-                synth.pitchbend(message.channel, message.pitch + 8192)
-        if cursor < music_end:
-            audio[cursor:music_end] = np.frombuffer(synth.generate_simple(music_end - cursor), dtype=np.float32).reshape(-1, 2)
-        for ch in range(16):
-            synth.control_change(ch, 64, 0)
-        for ch, key in active_keys:
-            synth.noteoff(ch, key)
-        audio[music_end:] = np.frombuffer(synth.generate_simple(len(audio) - music_end), dtype=np.float32).reshape(-1, 2)
+        from .renderers import gm_buffer
+        audio,renderer = gm_buffer(source,soundfont,rate,end,tail,gm_engine,fluidsynth)
     else:
         cache = {}
         for n in notes:
@@ -918,12 +900,14 @@ def render_preview(source, out, mode='reference', soundfont=None, profile=None, 
     out.parent.mkdir(parents=True, exist_ok=True)
     sf.write(out, audio, rate, format='WAV', subtype='PCM_24')
     report = {'schemaVersion': 1, 'mode': mode, 'output': str(out), 'sha256': _hash(out), 'sampleRate': rate,
-              'beginSeconds': begin, 'endSeconds': end, 'tailSeconds': tail, 'peakBeforeGain': peak,
+              'beginSeconds': begin, 'endSeconds': end, 'scoreDurationSeconds': duration,
+              'tailSeconds': tail, 'peakBeforeGain': peak,
               'commonSafetyGain': gain, 'referenceKind': 'original synthesized structural audition' if mode == 'reference' else 'General MIDI SoundFont audition' if mode == 'gm' else 'explicit sample-bank note-block approximation',
               'actualMinecraftRecording': False, 'spatialSimulation': False, 'listeningVerified': False,
               'limitations': ['No reference-mode output establishes real instrument timbre or artistic approval', 'Actual game attenuation, listener motion and simultaneous voice limits need client validation']}
     if soundfont:
         report['soundfontSha256'] = _hash(soundfont)
+    if mode=='gm':report['renderer']=renderer
     _write(out.with_suffix(out.suffix + '.json'), report)
     return report
 

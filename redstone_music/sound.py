@@ -74,9 +74,12 @@ def run(ctx):
               'listeningVerified': False, 'soundPackProvided': bool(resources), 'transformations': [],
               'limitations': ['Vanilla note-off and per-note velocity are not implemented by the game sound engine',
                               'Generated arrangement and mix require listening; structural success is not artistic approval']}
+    adapter=settings.get('adapter','role-consistent')
+    if adapter not in ('role-consistent','legacy-vanilla'):
+        raise ValueError('sound.adapter must be role-consistent or explicit legacy-vanilla')
     if settings.get('profile', 'vanilla') != 'vanilla' and not resources:
         raise ValueError('A custom sound profile requires an explicit input soundPack')
-    if profile_path or adaptation_path:
+    if profile_path or adaptation_path or (score['sourceMode']!='approved_events' and adapter!='legacy-vanilla'):
         from .music_tools import plan_noteblocks, validate_sound_profile, validate_soundpack
         path, profile = None, None
         if profile_path:
@@ -93,8 +96,19 @@ def run(ctx):
         if adaptation_path:
             adaptation = Path(adaptation_path)
             adaptation = adaptation if adaptation.is_absolute() else Path(ctx['project']) / adaptation
-        events = plan_noteblocks(score, profile=path, adaptation_plan=adaptation)
+        events = plan_noteblocks(score, profile=path, adaptation_plan=adaptation,
+                                consistency=settings.get('consistency','role'))
+        if not settings.get('retrigger',True):
+            events['candidates']=[n for n in events['candidates'] if n['kind']!='retrigger']
+        for decision in events['phraseDecisions']:
+            if decision['transpose']:
+                report['transformations'].append({'family':decision['role'],
+                    'type':'whole-role-octave-transpose' if events.get('consistency')=='role' else 'whole-phrase-octave-transpose',
+                    'semitones':decision['transpose'],'noteIds':decision['noteIds']})
+        if not profile_path:
+            report['limitations'].append('Vanilla sample envelopes are unmeasured here; no fixed 5/6 GT retrigger is invented. Long notes need a calibrated sound profile and listening.')
         report.update(profile=events['profileId'], phraseDecisions=events['phraseDecisions'],
+                      adapter=adapter, consistency=events.get('consistency'),
                       sustainStrategy='explicit per-slot profile; no fixed global retrigger interval',
                       events=len(events['candidates']), onsets=sum(n['kind'] == 'onset' for n in events['candidates']),
                       retriggers=sum(n['kind'] == 'retrigger' for n in events['candidates']),
@@ -103,6 +117,10 @@ def run(ctx):
         if adaptation:
             report.update(explicitAdaptationApplied=True, adaptationPlanSha256=hashlib.sha256(adaptation.read_bytes()).hexdigest())
             shutil.copyfile(adaptation, out / 'adaptation_plan.json')
+        else:
+            _write(out/'adaptation_plan.json',{'schemaVersion':1,'profileId':events['profileId'],
+                'sourceMidiSha256':events.get('sourceMidiSha256'),'decisions':events['phraseDecisions'],
+                'listeningVerified':False})
         if profile_path:
             pack = Path(resources)
             pack = pack if pack.is_absolute() else Path(ctx['project']) / pack

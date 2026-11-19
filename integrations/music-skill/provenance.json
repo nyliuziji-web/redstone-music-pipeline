@@ -1,0 +1,43 @@
+{
+  "project": "owoevan-dev/music-skill",
+  "commit": "ba4338a958132ad6e5664fb6a767369dcb51c102",
+  "license": "MIT selected files only",
+  "files": [
+    {
+      "sourcePath": "LICENSE",
+      "local": "LICENSE",
+      "url": "https://github.com/owoevan-dev/music-skill/blob/ba4338a958132ad6e5664fb6a767369dcb51c102/LICENSE",
+      "sha256": "d4ee3f3c28d33bf0804c89aa351f715a0ae7686a1800613bc0f8d552c4081315"
+    },
+    {
+      "sourcePath": "skills/music-production/scripts/musiclib/voicing.py",
+      "local": "musiclib/voicing.py",
+      "url": "https://github.com/owoevan-dev/music-skill/blob/ba4338a958132ad6e5664fb6a767369dcb51c102/skills/music-production/scripts/musiclib/voicing.py",
+      "sha256": "b79baf90aceb01be66d972bafcc07877e2aeade423fd928007c89c01ab77b2a9"
+    },
+    {
+      "sourcePath": "skills/music-production/scripts/musiclib/harmony.py",
+      "local": "musiclib/harmony.py",
+      "url": "https://github.com/owoevan-dev/music-skill/blob/ba4338a958132ad6e5664fb6a767369dcb51c102/skills/music-production/scripts/musiclib/harmony.py",
+      "sha256": "2a70ecafdc7b82b24d0cea7d09986056cd3815912757a76431e0943797591d20"
+    },
+    {
+      "sourcePath": "skills/music-production/references/arrangement.md",
+      "local": "arrangement.md.txt",
+      "url": "https://github.com/owoevan-dev/music-skill/blob/ba4338a958132ad6e5664fb6a767369dcb51c102/skills/music-production/references/arrangement.md",
+      "sha256": "b48b4c758e2360a7cd07b41f3227957e5b6b66041dde5043a01cd9e0759be402"
+    },
+    {
+      "sourcePath": "skills/music-production/references/development-and-groove.md",
+      "local": "development-and-groove.md.txt",
+      "url": "https://github.com/owoevan-dev/music-skill/blob/ba4338a958132ad6e5664fb6a767369dcb51c102/skills/music-production/references/development-and-groove.md",
+      "sha256": "05a827d833c0620a4cb4a1a04b1aa40f83a76bd843f9fb0f45acbef2f177fae7"
+    }
+  ],
+  "excluded": [
+    "surge_host.py and GPL hosts",
+    "sample banks",
+    "installer/network code",
+    "model/example quality claims"
+  ]
+}

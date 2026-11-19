@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redstone-music-pipeline"
-version = "0.2.0a1"
+version = "0.3.0a1"
 description = "Agent-neutral redstone music production kit with professional skills, tools and version-bound evidence"
 readme = "PIPELINE.md"
 requires-python = ">=3.12"
@@ -20,7 +20,8 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-production = ["mido>=1.3,<2", "music21>=9,<12", "tinysoundfont>=0.3.7,<0.4", "soundfile>=0.13,<0.15", "scipy>=1.15,<2", "librosa>=0.11,<0.12", "Pillow>=11,<13"]
+production = ["mido>=1.3,<2", "music21>=9,<12", "soundfile>=0.13,<0.15", "scipy>=1.15,<2", "librosa>=0.11,<0.12", "Pillow>=11,<13"]
+render-tiny = ["tinysoundfont>=0.3.7,<0.4"]
 pitch = ["swift-f0[audio,midi]>=0.3,<0.4"]
 dev = ["build>=1.2,<2", "wheel"]
 

@@ -17,6 +17,8 @@ music21后端可以提供调性、和声与声部候选；它的调性置信不�
 
 单乐器复音可用Basic Pitch等候选，再用参考声部与和声核对。缺失声部可有依据地补写，标为新增编配。一次模型失败不等于无法制作：保留可信谱、旋律和人工校正路线。
 
+逐步安装和真实命令见[本机音频后端](../../../integrations/transcription/README.md)。先保留混音直转候选。有原始分轨就对目标声部直接转写，只有混音时再决定要不要模型分轨。用 `audio compare` 对齐同一段录音和候选，优先纠正起音错位、旋律八度、重复假音和伴奏泄漏。记录每个片段在原曲的起点以及没有可靠素材的部分。拿不准的和声写成新增编配，保留实际采用的理由。
+
 ## 怎样让编曲有结构
 
 1. 写出全曲段落和功能角色，不先追求轨道数量。
@@ -28,6 +30,27 @@ music21后端可以提供调性、和声与声部候选；它的调性置信不�
 这不是强制音乐规则。每次修改说明希望改善的具体听感，保留原版做同段比较。
 
 ## 编辑与试听
+
+```shell
+python run_pipeline.py composition study work/arrangement-study --soundfont work/bank.sf2
+python run_pipeline.py composition voicelead Am F C G --low 48 --high 67 --out work/voicings.json
+python run_pipeline.py composition import work/arrangement-study/original-lead.mid --out work/my-lead
+python run_pipeline.py composition review work/my-lead
+```
+
+练习的两个版本共享同一段 16 小节主题。对照 `spacious` 的长内声、句尾留白和 `groove` 的切分和弦、低音回答、鼓组重音。各版第 5–8 小节与第 9–12 小节改变密度和职责；核对变化是哪个轨、哪几拍造成的。参照[上游编曲](../../../integrations/music-skill/arrangement.md.txt)和[发展与律动](../../../integrations/music-skill/development-and-groove.md.txt)练习一段改写。
+
+用 study 生成的 `spacious.patch.json` 和 `groove.patch.json` 作完整的数据示例。实际写自己的 patch 时从工作目录的 `composition.json` 取 SHA-256 和 tick 范围，`addTracks` 添加新通道，`addNotes` 给既有轨增音，`operations` 用轨 ID 和音符 ID 改现有音。新增轨、音明确写 `origin: new_arrangement`。默认冻结所有源音符；准备校正某轨时，显式 `--freeze-role theme_attack` 等冻结其他可信角色。轨道编号可通过 `--roles roles.json` 指定，文件形如 `{"1":"theme_attack","2":"sub_bass"}`。质量回读时也检查导出 MIDI 的轨名和 program 能否让游戏编配识别预期角色。
+
+```shell
+python run_pipeline.py composition revise work/my-lead --patch work/revision.json --out work/revision-1
+python run_pipeline.py composition render work/revision-1 --out work/revision-1-audio --soundfont work/bank.sf2
+python run_pipeline.py composition export work/revision-1 --out work/master-candidate.mid
+```
+
+在同一音源和增益下听混合、旋律、低音及一起发声的和声。先核对两种方案的主题完全一致，然后选一项编曲差异改动。报告中的同力度和同起落块和弦是查找位置的线索，是否保留由曲风、参考和试听决定。缺 SoundFont 时可以合成结构预听，选定音色前应再用真实音源或游戏采样。
+
+需要按秒修一小段 MIDI 时，也可用旧的精确编辑命令。
 
 ```shell
 python run_pipeline.py edit-music-region input.mid --patch edit.json --out work/candidate.mid

@@ -87,19 +87,22 @@ def capabilities(project=None, probe=False):
                              'remedy': f'Install the relevant kit extra; distribution={distribution}'}
     commands = {'node': _command('node', ['--version'], (24, 0)),
                 'ffmpeg': _command('ffmpeg', ['-version']), 'ffprobe': _command('ffprobe', ['-version']),
-                'java': _command('java', ['-version'], (21, 0))}
+                'java': _command('java', ['-version'], (21, 0)),
+                'fluidsynth': _command('fluidsynth', ['--version'])}
     config = load_config(project) if project else {}
     runtime = config.get('runtime', {})
     paths = {key: bool(value and Path(value).expanduser().is_file()) for key, value in runtime.items()
              if key in ('java', 'serverJar', 'traceAgent', 'clientJar', 'clientRuntime')}
     definition = {
         'midi-build': ('nbtlib', 'numpy'), 'music-edit': ('mido',), 'music-theory': ('music21',),
-        'reference-audition': ('numpy', 'soundfile'), 'gm-audition-engine': ('numpy', 'soundfile', 'mido', 'tinysoundfont'),
+        'reference-audition': ('numpy', 'soundfile'), 'gm-audition-engine': ('numpy', 'soundfile', 'mido'),
         'sample-audition-and-soundpack': ('numpy', 'soundfile', 'scipy'), 'stage-preview': ('numpy', 'PIL'),
         'schema-validation': ('jsonschema',), 'pitch-assistance': ('swift_f0',), 'audio-analysis': ('librosa','soundfile')}
     items = {key: {'available': all(modules[n]['available'] for n in names), 'requires': list(names)}
              for key, names in definition.items()}
     items['midi-build']['available'] &= commands['node']['available']
+    items['gm-audition-engine']['available'] &= modules['tinysoundfont']['available'] or commands['fluidsynth']['available']
+    items['gm-audition-engine']['oneOf'] = ['TinySoundFont Python package', 'FluidSynth binary (PATH or explicit --fluidsynth)']
     items['gm-audition-engine']['additionalInput'] = 'A compatible, licensed SoundFont file must also be supplied and tested'
     items['media-comparison'] = {'available': commands['ffmpeg']['available'] and modules['soundfile']['available']}
     items['game-server-replay'] = {'available': False, 'configuredFiles': paths,
@@ -223,12 +226,20 @@ def handoff(project):
                    'Review actual sample/full media and record user feedback; then verify capture and delivery')
     current_user_reviews = [r for r in reviews if r['current'] and r.get('reviewer', {}).get('kind') == 'user'
                             and r.get('verdict') == 'approved' and r.get('method', '').startswith('actual_')]
+    music_evidence = {}
+    listening_methods = {'actual_listening', 'actual_listening_and_viewing'}
+    for stage in ('music', 'sound'):
+        music_evidence[stage] = sorted({r['scope'] for r in current_user_reviews
+                                      if r['stage'] == stage and r['method'] in listening_methods})
     result = {'schemaVersion': 1, 'project': str(project), 'title': config['title'], 'state': state,
               'reviews': reviews, 'currentUserArtisticReviews': len(current_user_reviews),
+              'userApprovedListeningScopes': music_evidence,
               'decisions': _json_lines(owned(project, 'decisions.jsonl'))[-10:],
               'nextAction': next_action, 'artisticPassInferred': False}
     lines = ['# 当前交接', '', config['title'], '', f'运行状态：{state.get("status")}',
-             f'下一操作：{next_action}', f'有效用户听看认可记录：{len(current_user_reviews)}', '',
+             f'下一操作：{next_action}', f'有效用户听看认可记录：{len(current_user_reviews)}',
+             f'音乐母版听审：{music_evidence["music"] or "待听审"}',
+             f'游戏音色听审：{music_evidence["sound"] or "待听审"}', '',
              '## 阶段', '']
     for name, row in state.get('stages', {}).items():
         lines.append(f'- {name}: {row.get("status")}; stale={row.get("stale", False)}; {row.get("artifact", row.get("error", ""))}')

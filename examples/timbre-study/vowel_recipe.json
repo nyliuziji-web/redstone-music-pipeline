@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "rootMidi": 72,
+  "kind": "vowel",
+  "seconds": 3.2,
+  "gain": 0.14,
+  "attackWeight": 0.12,
+  "bodyWeight": 0.88,
+  "releaseSeconds": 0.06
+}

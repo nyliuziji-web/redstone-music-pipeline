@@ -2,7 +2,7 @@
 
 供新 agent 冷启动的 Minecraft 红石音乐制作工作包：8 个专业 Skill、实操教程、可执行工具、项目合同、原创练习与证据交接。中文从 [START_HERE](START_HERE.md) 开始；设计和取舍见[改写方案](docs/REWRITE_PLAN.md)。
 
-`0.2.0a1` 是可运行的开发预览。已完成原创音乐冷启动到静态候选交付；真实游戏、目标光影、听看认可及录制按作品分别验收，见[实施验证](docs/IMPLEMENTATION_STATUS.md)。
+`0.3.0a1` 开发预览加入录音转写候选、局部编曲、分轨试听和音符盒音色设计。新 agent 从 [START_HERE](START_HERE.md) 开始，实际验证与未完成的听审见[实施验证](docs/IMPLEMENTATION_STATUS.md)。
 
 ## 安装与开始
 

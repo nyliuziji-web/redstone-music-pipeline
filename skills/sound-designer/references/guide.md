@@ -1,44 +1,85 @@
-# 声音设计、校准与路由
+# 可调音色、资源包与声音路由
 
-## 制作次序
+## 先把听感目标写成可比较的变量
 
-先用拨弦、持续、低音和打击等不同角色测试，不一开始做整套128种GM音色。选择或合成样本后去无意义空头，保留有用攻击和释放，检查直流、削波、尾部点击和无意静音。
+对每个角色写一行：它承担什么音乐信息、必须听清什么、用哪个独立声音槽、目标音域、短起音或持续、谁要让位。例如主题保留音高/节奏轮廓，木质短攻击保留MC颗粒，圆润音体避免高音变尖；pad降低起音锐度并缩短跨和弦尾巴。不能用“所有音色都更真实”代替角色设计。
 
-定位音效使用可解码的单声道OGG Vorbis。每个样本记录来源、加工、sha256、采样率、根音、时长、峰值及包络；替换同一个原版sound event会影响所有使用该事件的音符盒。
+先做3个方向：偏原版/MC-inspired、混合、音体主导。在相同音符、机位与声部增益下听差异，再决定方向。现成示例只证明工具能力，不自动成为用户作品的音色。
 
-## 音高校准
+## 直接可运行的练习
 
-当前 profile 接口只接受每种原版乐器的标准稳定底座，避免声明乐器与实体更新后的乐器不一致：harp/dirt、bass/oak_planks、guitar/white_wool、flute/clay、bell/gold_block、chime/packed_ice、xylophone/bone_block、iron_xylophone/iron_block、cow_bell/soul_sand、didgeridoo/pumpkin、bit/emerald_block、banjo/hay_block、pling/glowstone、basedrum/stone、snare/sand、hat/glass。标识均用 minecraft 命名空间。相同材质的其他方块没有自动视为受支持；扩展时先核对目标游戏注册与实际触发。
-
-常见原版倍率为`2^((note-12)/12)`，`note=12`对应样本基准速度。有效音高还受样本根音、sounds.json附加pitch与模组偏移影响。先测单音再测低中高；升一八度时样本时长减半，降一八度加倍，检查持续策略是否仍适用。
-
-SF2试听器的踏板、循环和note-off是参考音源行为，不是单音OGG自动支持的行为。持续样本太长会糊和声，太短或频繁再起音会颤动；在实际乐句上比较。
-
-## 可执行例子
+命令前缀均为`python run_pipeline.py`，使用项目生产依赖环境：
 
 ```shell
-python run_pipeline.py build-soundpack templates/soundpack.example.json --out work/sounds
-python run_pipeline.py plan-noteblocks input.mid --out work/adaptation --profile work/sounds/profile.json
-python run_pipeline.py render-preview work/adaptation/events.json --out work/mix.wav --mode noteblock --profile work/sounds/profile.json
-python run_pipeline.py compare-candidates work/baseline.wav work/mix.wav --out work/comparison
+python run_pipeline.py design-timbre examples/timbre-study/vowel_recipe.json --out work/vowel-v01
+python run_pipeline.py build-palette examples/timbre-study/palette_spec.json --out work/palette-v01
+python run_pipeline.py plan-noteblocks examples/timbre-study/master.mid --profile work/palette-v01/bank/profile.json --out work/planned
+python run_pipeline.py audit-palette work/palette-v01/bank/profile.json --events work/planned/events.json --out work/range-audit.json
+python run_pipeline.py compare-timbres examples/timbre-study/master.mid --palette examples/timbre-study/palette_spec.json --out work/timbre-comparison
+python run_pipeline.py timbre-study work/full-timbre-study
 ```
 
-声音规格中的`synthesis`生成原创学习音色，也可按工具格式指定自己的样本。用户曲目最终音色应另做候选，学习合成音不自动符合其审美。
+输出目录必须是新目录。`build-palette`返回实际`profile`和`soundPack`路径，先读返回值，不推断哈希目录。工具不会安装模组、下载音源或寻找Nevada文件。
 
-## 混音判断
+20秒练习的主旋律范围61–82、统一根音72，调音值为1–22；不是逐音换乐器。包含独立主旋律、元音长音、和声、低音与鼓。`comparison/`有三套完整预听和每个声部独奏；`sustain_comparison.json`另比较同一短持续样本的自然尾音与补触发。原始MIDI与声音样本都保留。
 
-先听主旋律自身，再听完整混合，最后检查移动跟拍。旋律不清可能是其采样缺乏起音、频段遮盖、共用槽、位置/距离或实际增益，不只有“加3dB”一种办法。
+## 配方格式与可调参数
 
-保持独奏采用完整混合中的同一增益；A/B在相同时间、相同音乐、相同位置与补触发下比较。响度匹配保留真峰值余量并记增益；不单独归一化每个stem破坏相对平衡。指标发现问题，听感决定取舍。
+一个独立单音配方：
 
-## 成功练习
+```json
+{"schemaVersion":1,"kind":"vowel","rootMidi":72,"seconds":2.8,"gain":0.17,
+ "attackSeconds":0.018,"releaseSeconds":0.12,"brightnessHz":6500,
+ "formants":[700,1220,2600],"attackWeight":0.16,"bodyWeight":0.84}
+```
 
-运行上面的声音包例子，对lead、pad、bass、鼓分别渲染短句。检查ZIP根、sounds.json引用与replace、样本解码和根音；读回校准报告。独立角色可调整且其他角色不被连带修改。
+支持wood、pluck、sustain、bass、vowel、bell、kick、snare、hat。参数作用：
 
-## 故意失败练习
+| 问题/目标 | 先试的变量 | 不能据此推断 |
+|---|---|---|
+| 主题起音不易辨 | attackWeight、attackSeconds、短木质/拨弦攻击 | 越尖越好；原曲旋律错误可由起音掩盖 |
+| 类元音持续音 | formants、持续音体、释放与音区 | 有歌词、复刻原唱或真实无限循环 |
+| 高音刺耳 | brightnessHz、谐波构成、音体/攻击比例 | 简单低通一定优于重新配器 |
+| 低音糊 | decaySeconds、低音/底鼓分工、槽位增益 | 单独归一化低音就解决混音 |
+| 尾音跨和声 | seconds、releaseSeconds、织体稀疏度 | 延长MIDI note-off会改变原版声音尾音 |
 
-把一个槽的`rootMidi`误设高一个八度，渲染同段并测/听；应该定位为中心音/profile错误，不去改母版所有音符。另将旋律/pad映射同槽，确认路由联动后分离。每次修复保持未涉及文件hash不变。
+`gain`是配方的目标单音峰值；合成阶段在混音前按这个目标烘焙。它不是游戏逐音velocity。配方层会去DC、首尾淡入淡出，并输出来源、参数与哈希；整个混音/独奏组才共享一个安全增益，不会分别抬高弱声部的独奏。
+
+可显式加入本地单音，而非只能使用内置合成：
+
+```json
+{"schemaVersion":1,"kind":"sustain","rootMidi":72,"seconds":1.4,
+ "gain":0.18,"attackWeight":0.2,"bodyWeight":0.8,
+ "attackSample":{"path":"local/attack.wav","rootMidi":66,"license":"operator-recorded source rights"},
+ "bodySample":{"path":"local/body.wav","rootMidi":72,"license":"CC0-1.0"}}
+```
+
+路径相对于配方文件；每层注明实际采样根音与来源权利。可以设startSeconds、seconds和gain选择单音区域。工具按声明根音重采样，不替用户证明声明正确；立体声显式下混并在报告记录。不把一整段原曲塞进一次触发的样本冒充逐音还原。
+
+## 从角色配方到资源包
+
+palette在原有profile的slots里使用`recipe`，其余仍是instrument/baseBlock/rootMidi与sustain。角色→槽位用roles表。`build-palette`先保存每个配方及来源，再生成能被现有`plan-noteblocks`、`sound`阶段和采样试听使用的profile/resources.zip。
+
+同一声音事件不能承担两个独立增益/包络目标。主旋律与pad共用flute时，改flute样本会同时改两者；先分槽，再讨论提升哪一层。槽位不必与GM program一一对应。
+
+当前标准稳定底座：harp/dirt、bass/oak_planks、guitar/white_wool、flute/clay、bell/gold_block、chime/packed_ice、xylophone/bone_block、iron_xylophone/iron_block、cow_bell/soul_sand、didgeridoo/pumpkin、bit/emerald_block、banjo/hay_block、pling/glowstone、basedrum/stone、snare/sand、hat/glass；方块使用minecraft命名空间。其他同材料方块没有自动视为已验证。
+
+## 25格校准和长音策略
+
+倍率为`2^((note-12)/12)`，note=12为样本原速。根音72的样本覆盖60–84；最低音比中心音慢一倍，最高音快一倍，样本长度同步变化。`audit-palette`实际解码并重采样全部25格，给出音高候选、长度与95%能量时间；强泛音/共振峰可使频谱最高峰不是基音，不能只凭一个cents数判错。
+
+长音短缺时，分开比较：换更长/更平稳的样本；增加独立持续层；少量补触发。补触发间隔参考实际音区和包络，不抄固定5/6GT。示例按根音95%能量时间派生一个候选间隔，明确不是全音区最优值；实际检查新起音颤动、幅度堆积与机器事件成本。
+
+工具会把持续不足、相邻样本尾音重叠列为疑点。和弦重叠有时有意，短拨弦本来就应衰减，不能把每条风险都当自动修复指令。原版不按note-off停音，SF2的loop、踏板和释放也不会自动进入一次性OGG。
+
+## 怎样听审和定位问题
+
+先听相同增益的主旋律独奏，再听完整混合，再检查实际移动跟拍。旋律不清可能是攻击弱、频段遮盖、共用槽或距离；不是只有“加3dB”。同时保留相同谱/增益组与另行等响A/B，避免只选更响版本。
+
+`compare-timbres`不自动做LUFS匹配。其所有solo与mix共用一个安全系数，可以检验solo相加是否等于mix。没有明确提供原版单音时，native标签下是原创MC-inspired合成，不是stock Minecraft。三套音色都不是真实游戏录音或空间声场证明。
+
+优先覆盖：主旋律长音、复杂高潮、低音/鼓、角色交接与结尾。每轮说明改变哪些参数、预期听到什么、哪些声部保持不变。完成游戏录音后绑定准确profile/资源包/hash与机位，再记录用户意见。
 
 ## 退出条件
 
-声音包能解码、所有引用存在、样本与profile一致；根音/持续策略和槽位路由有证据，混合不削波、主读可辨。服务器触发与实际启用资源包录音另验；尚未进入游戏时明确写采样近似。
+音色、音高/尾音与角色关系有可听对照；资源包可解码且槽位清楚；源与新增材料可追溯；未涉及声部没有被连带修改。工具检查不授予艺术认可；实际游戏资源加载、移动声音、补触发与停止重播分别验收。
