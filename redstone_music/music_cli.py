@@ -118,6 +118,11 @@ def _composition_commands(sub):
 
 
 def add_music_commands(sub):
+    from .texture_study import create_texture_study
+
     _audio_commands(sub)
     _composition_commands(sub)
     _recipe_commands(sub)
+    p = sub.add_parser('texture-study', help='Generate original baseline and quiet texture projects')
+    p.add_argument('out')
+    p.set_defaults(_music_action=lambda a: create_texture_study(a.out))

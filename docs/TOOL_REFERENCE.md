@@ -17,6 +17,7 @@
 | `design-timbre RECIPE --out DIR` / `build-palette SPEC --out DIR` | 调整起音、音体、根音与包络，生成采样和可进入实体编配的声音包 |
 | `audit-palette PROFILE [--events FILE] [--out FILE]` | 测全部 25 格变速音高和尾音，定位持续和重叠疑点 |
 | `compare-timbres SOURCE --palette FILE --out DIR` / `timbre-study NEW_DIR` | 固定 MIDI 和事件决策，对照三种配方与同增益独奏 |
+| `texture-study NEW_DIR` | 生成原创 16 秒基线和织体候选、同增益混合和新增层独奏，以及可用 `run` 构建的两个项目 |
 | `build-soundpack SPEC --out DIR` | 原创合成或显式提供的采样，生成 profile、样本、校准报告、resources.zip |
 | `calibrate-profile PROFILE [--out FILE]` | 实际解码、频谱中心候选与声明根音比较；噪声/复杂采样仍需听审 |
 | `render-preview SOURCE --out WAV --mode MODE [--profile FILE] [--soundfont FILE] [--fluidsynth PATH] [--begin S] [--end S]` | 结构参考、真实 SoundFont 或音符盒采样预听。GM 可用 FluidSynth 或 TinySoundFont |

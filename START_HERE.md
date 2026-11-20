@@ -34,6 +34,8 @@ python run_pipeline.py learn projects/lesson
 
 接手只有 MP3 的作品时，运行 `init PROJECT --reference-audio SOURCE.mp3`，按[本机音频后端](integrations/transcription/README.md)先制作代表段。按录音的有效时间轴比原曲与重建，经校正后再准备全曲音乐任务交付。可信旋律和缺失伴奏可从 `composition study` 学习冻结主题与变换织体。进入音符盒制作用 `timbre-study` 练习同谱异音色和长音策略。
 
+要试轻薄底色、句尾回声和拍缝颗粒，可以运行 `python run_pipeline.py texture-study projects/texture`。[原创练习](examples/texture-study/README.md)含两种可构建的样段和同增益试听。现有能力与待补足部分见[模块状态](docs/IMPLEMENTATION_STATUS.md)。
+
 ## 建立作品并推进
 
 ```shell

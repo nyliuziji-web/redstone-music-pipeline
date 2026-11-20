@@ -82,6 +82,20 @@ def atomic_json(path, data):
             temporary.unlink()
 
 
+def _rename_artifact(source, destination):
+    """Keep atomic promotion intact when Windows briefly holds a directory."""
+    for delay in (0, .10, .25, .50, 1.0):
+        if delay:
+            time.sleep(delay)
+        try:
+            source.rename(destination)
+            return
+        except OSError as error:
+            if (getattr(error, 'winerror', None) not in {5, 32, 33}
+                    or destination.exists() or not source.exists() or delay == 1.0):
+                raise
+
+
 def owned(project, relative):
     project = Path(project).resolve()
     candidate = project / relative
@@ -640,10 +654,10 @@ def run_pipeline(project, until="release", force=False, overrides=None):
                     else:
                         quarantine = owned(project, ".quarantine/" + stage + "-" + uuid.uuid4().hex)
                         quarantine.parent.mkdir(parents=True, exist_ok=True)
-                        destination.rename(quarantine)
-                        staging.rename(destination)
+                        _rename_artifact(destination, quarantine)
+                        _rename_artifact(staging, destination)
                 else:
-                    staging.rename(destination)
+                    _rename_artifact(staging, destination)
                 staging = None
                 state["stages"][stage] = record
                 outputs[stage] = str(destination)

@@ -36,7 +36,7 @@ Selected MIT source and text from [music-skill](https://github.com/owoevan-dev/m
 
 Basic Pitch, Beat This!, audio-separator and MuScriptor are optional separate installations. Treat code and checkpoint licenses independently. FluidSynth and GeneralUser GS are user-supplied or acquired separately under their own terms. See the transcription integration and environment guide for tested versions and asset sources.
 
-The original 16-bar composition study and the 20-second timbre study use CC0-1.0 musical material and generated recipes. Public exports include the original practice materials and code. Audition audio, external SoundFonts, downloaded models and real-song test material stay in local project or runtime folders.
+The original 16-bar composition study, 20-second timbre study and 16-second quiet texture study use CC0-1.0 musical material and generated recipes. Public exports include the original practice materials and code. External SoundFonts, downloaded models and real-song test material stay in local project or runtime folders.
 
 The unmodified sparse voxel module from [harrynull/mcbuild](https://github.com/harrynull/mcbuild), commit `34ce86372d4c23f4d83d4e24fc256cb399d6c3e3`, is vendored in `redstone_music/_vendor/mcbuild_voxel.py`. Its MIT license is preserved in `integrations/mcbuild/LICENSE`, with exact source/hash in provenance.json. Hosted agents, NeoForge runtime and Minecraft textures are excluded.
 

@@ -2,7 +2,7 @@
 
 供新 agent 冷启动的 Minecraft 红石音乐制作工作包：8 个专业 Skill、实操教程、可执行工具、项目合同、原创练习与证据交接。中文从 [START_HERE](START_HERE.md) 开始；设计和取舍见[改写方案](docs/REWRITE_PLAN.md)。
 
-`0.3.0a1` 开发预览加入录音转写候选、局部编曲、分轨试听和音符盒音色设计。新 agent 从 [START_HERE](START_HERE.md) 开始，实际验证与未完成的听审见[实施验证](docs/IMPLEMENTATION_STATUS.md)。
+`0.3.0a2` 开发预览整合录音转写、局部编曲、专用音色和轻声部织体。新 agent 从 [START_HERE](START_HERE.md) 开始。各模块的完成度、实测范围与短板见[实施与验证](docs/IMPLEMENTATION_STATUS.md)。
 
 ## 安装与开始
 
@@ -25,6 +25,7 @@ python -m venv .venv
 |---|---|
 | 音乐 | Mido 保留母版与局部编辑；music21 乐理候选；librosa 音频测量；可选 SwiftF0 单旋律候选 |
 | 音符盒与声音 | 按乐句显式适配、音色分槽/根音/延音策略、原创采样资源包、频谱校准、参考/GM/采样试听与等响 A/B |
+| 轻声部织体 | 原创 `texture-study` 生成同谱基线、增加底色/回声/颗粒的样段、同增益试听及两个可独立构建的项目 |
 | 实体机器 | 偶/奇双线路、复音、受限声部位置/相机参数、保护区建筑合入、Anvil/Litematica 独立回读 |
 | 建筑与演出 | 固定提交 mcbuild 体素核心、原创几何四视图、节点/环/螺旋/曲线 show score、标准 Fabric 客户端源码 |
 | 制作管理 | 8 角色文件任务、不可变产物/失效重建、决策、绑定文件哈希的反馈、当前交接、媒体检查与源码包导出 |

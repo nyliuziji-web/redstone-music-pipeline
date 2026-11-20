@@ -51,6 +51,26 @@ class OrchestratorTests(unittest.TestCase):
         change(data)
         core.atomic_json(path, data)
 
+    def test_windows_sharing_conflict_does_not_rebuild_valid_staging(self):
+        original_rename = Path.rename
+        attempted = []
+
+        def sharing_conflict_once(path, target):
+            attempted.append(path)
+            if len(attempted) == 1:
+                error = PermissionError('directory briefly in use')
+                error.winerror = 5
+                raise error
+            return original_rename(path, target)
+
+        with patch.object(Path, 'rename', sharing_conflict_once):
+            state = self.run_to('music')
+        self.assertEqual(self.calls, ['music'])
+        self.assertEqual(attempted, [attempted[0], attempted[0]])
+        record = state['stages']['music']
+        self.assertTrue(core.artifact_valid(self.project/record['artifact'], record))
+        self.assertEqual(record['attempts'], 1)
+
     def test_resumes_and_reuses_verified_artifacts(self):
         first = self.run_to()
         self.assertEqual(first['status'], 'candidate_ready')
