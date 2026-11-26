@@ -76,23 +76,24 @@ def atomic_json(path, data):
             stream.write("\n")
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, path)
+        _move_output(temporary, path, replace=True)
     finally:
         if temporary.exists():
             temporary.unlink()
 
 
-def _rename_artifact(source, destination):
-    """Keep atomic promotion intact when Windows briefly holds a directory."""
+def _move_output(source, destination, *, replace=False):
+    """Keep atomic promotion intact when Windows briefly holds a file or directory."""
+    move = os.replace if replace else os.rename
     for delay in (0, .10, .25, .50, 1.0):
         if delay:
             time.sleep(delay)
         try:
-            source.rename(destination)
+            move(source, destination)
             return
         except OSError as error:
             if (getattr(error, 'winerror', None) not in {5, 32, 33}
-                    or destination.exists() or not source.exists() or delay == 1.0):
+                    or (not replace and destination.exists()) or not source.exists() or delay == 1.0):
                 raise
 
 
@@ -659,10 +660,10 @@ def run_pipeline(project, until="release", force=False, overrides=None):
                     else:
                         quarantine = owned(project, ".quarantine/" + stage + "-" + uuid.uuid4().hex)
                         quarantine.parent.mkdir(parents=True, exist_ok=True)
-                        _rename_artifact(destination, quarantine)
-                        _rename_artifact(staging, destination)
+                        _move_output(destination, quarantine)
+                        _move_output(staging, destination)
                 else:
-                    _rename_artifact(staging, destination)
+                    _move_output(staging, destination)
                 staging = None
                 state["stages"][stage] = record
                 outputs[stage] = str(destination)

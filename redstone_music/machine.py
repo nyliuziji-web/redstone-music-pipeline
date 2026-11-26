@@ -8,6 +8,7 @@ import shutil
 import subprocess
 
 from .world import write_litematic, write_world
+from .core import _move_output
 
 DEPENDENCY_FILES = ['redstone_music/assets/controls.mjs','redstone_music/assets/layout.json','redstone_music/world.py','redstone_music/runtime.py','redstone_music/stage_tools.py','redstone_music/_vendor/mcbuild_voxel.py']
 
@@ -315,7 +316,7 @@ def run(ctx):
     subprocess.run([node,str(Path(__file__).parent/'assets/controls.mjs'),str(argsfile)],check=True,capture_output=True,text=True,timeout=180)
     argsfile.unlink()
     # Relocate namespace directory after rendering, with unique scoreboard/entity tags.
-    (pack/'data/nevada_full').rename(pack/'data'/namespace)
+    _move_output(pack/'data/nevada_full', pack/'data'/namespace)
     load=pack/'data'/namespace/'function/load.mcfunction';text=load.read_text(encoding='utf-8').splitlines()
     text.insert(1,f'execute unless score #built {objective} matches 1 run scoreboard players set #built {objective} 1')
     text.append(f'execute unless score #sub {objective} matches 0..1 run scoreboard players set #sub {objective} 1')
