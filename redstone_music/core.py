@@ -84,12 +84,14 @@ def atomic_json(path, data):
 
 def _move_output(source, destination, *, replace=False):
     """Keep atomic promotion intact when Windows briefly holds a file or directory."""
-    move = os.replace if replace else os.rename
     for delay in (0, .10, .25, .50, 1.0):
         if delay:
             time.sleep(delay)
         try:
-            move(source, destination)
+            if replace:
+                os.replace(source, destination)
+            else:
+                source.rename(destination)
             return
         except OSError as error:
             if (getattr(error, 'winerror', None) not in {5, 32, 33}
