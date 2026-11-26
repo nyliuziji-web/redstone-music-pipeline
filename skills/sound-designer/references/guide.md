@@ -74,6 +74,8 @@ palette在原有profile的slots里使用`recipe`，其余仍是instrument/baseBl
 
 ## 怎样听审和定位问题
 
+先按[音色单变量对照](../../../docs/PRODUCTION_DECISIONS.md#2-音色意见先拆成可比较的变量)选择基线、改动层与实录机位。离线混合需要持续乐器时，可参考[连音与音符盒起音的分层方法](../../../docs/SCORE_FROM_REFERENCES.md#4-把时值音体和音符盒起音拆开)。
+
 先听相同增益的主旋律独奏，再听完整混合，再检查实际移动跟拍。旋律不清可能是攻击弱、频段遮盖、共用槽或距离；不是只有“加3dB”。同时保留相同谱/增益组与另行等响A/B，避免只选更响版本。
 
 `compare-timbres`不自动做LUFS匹配。其所有solo与mix共用一个安全系数，可以检验solo相加是否等于mix。没有明确提供原版单音时，native标签下是原创MC-inspired合成，不是stock Minecraft。三套音色都不是真实游戏录音或空间声场证明。

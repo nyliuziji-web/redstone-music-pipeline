@@ -24,6 +24,8 @@ python run_pipeline.py run projects/my-song --until validate
 
 ## 用户反馈记录
 
+先用[代表段制作与复查记录](../../../templates/sample-review.md)整理听看的片段、比较条件、改动和基线。采样、实体事件、机位与用户认可的范围分别核对。
+
 复制[review模板](../../../templates/review.example.json)，换成实际文件路径/hash和用户原意。`reviewer.kind=user`必须附真实`userFeedback`；不要推断用户没有说过的认可。
 
 ```shell

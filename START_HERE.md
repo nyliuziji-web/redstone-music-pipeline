@@ -26,7 +26,8 @@ python run_pipeline.py learn projects/lesson
 
 | 用户有什么 | 从哪开始 |
 |---|---|
-| 原曲录音、分轨、简谱或待改善 MIDI | [从混音校出可信母版](docs/MIX_TO_MIDI.md)。有谱或分轨时先标可信部分，只转写缺失声部 |
+| 原曲录音、分轨或待改善的转写 | [从混音校出可信母版](docs/MIX_TO_MIDI.md)，先校一个能暴露问题的乐句 |
+| 有谱面、简谱或局部 MIDI | [用谱面、短 MIDI 和录音重建母版](docs/SCORE_FROM_REFERENCES.md)，先列版本与素材覆盖范围 |
 | 完整可信 MIDI | [制作独立游戏演奏谱](docs/PERFORMANCE_AND_TRACK.md#1-先做一段游戏编曲)。先对照母版、改编报告与游戏采样试听 |
 | 已试听的 Minecraft 演奏谱与声音包 | [从乐句到轨道、建筑与稳镜头](docs/PHRASE_TO_WORLD.md)。用触发谱、声音 profile 与资源包设计代表段 |
 
@@ -71,3 +72,5 @@ python run_pipeline.py handoff projects/my-song
 离线生成、服务端触发、客户端画面/声音、艺术认可与成片检查分别记录。当前可执行能力和缺项以`capabilities`及真实报告为准；研究候选与拟议能力不自动可用。
 
 发生问题时先看[诊断路线](docs/TROUBLESHOOTING.md)，交接使用`handoff`输出和项目合同。包维护者见[维护说明](docs/MAINTAINING.md)。
+
+听感或观看有问题时，从[制作判断与复查](docs/PRODUCTION_DECISIONS.md)选一种修法。每轮代表段用[制作与复查记录](templates/sample-review.md)保存依据、候选与反馈。
