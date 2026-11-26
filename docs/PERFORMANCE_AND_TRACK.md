@@ -75,3 +75,5 @@ python run_pipeline.py preview-track placed_blocks.json --out work/geometry-revi
 ```
 
 当前实现提供乐句级支路变化和可编辑建筑形状。连续电气支路仍沿统一轴向推进，相机使用共享时间轴。跨段折返、自由三维布线和非常高的复音仍需另外设计和实测。
+
+需要为短段编排跟拍时，在 `layout.camera.keyframes` 提供 `atGT`、`x`、`eyeY`、`yaw` 和 `pitch`。键位从 -20 GT 到 `musicGT + 20`，相邻至少 12 GT，整体仍随实体电路沿 +Z 前进。先按乐句定义跟拍的焦点与视线，再验收沿途净空。导出时会对照编译后的轨道和场景检查相机走廊，原版服务端逐音回放可检查该刻的实际坐标。画面与听感仍在客户端验收。

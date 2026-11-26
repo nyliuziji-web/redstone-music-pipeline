@@ -54,14 +54,16 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
         layout=[{**f,**changes.get(f['id'],{})} for f in layout]
     camera={'x':37.5,'eyeY':112.5,'teleportDuration':3,'targetLeadBlocks':2,'speedBlocksPerSecond':20}
     cam=options.get('camera',{})
-    if not isinstance(cam,dict) or not cam.keys() <= {'x','eyeY','teleportDuration'}:
-        raise ValueError('Camera accepts x, eyeY and teleportDuration; speed follows the physical clock')
+    if not isinstance(cam,dict) or not cam.keys() <= {'x','eyeY','teleportDuration','keyframes'}:
+        raise ValueError('Camera accepts x, eyeY, teleportDuration and optional keyframes')
     camera.update(cam)
     if (any(type(camera[k]) not in (int,float) or not math.isfinite(camera[k]) for k in ('x','eyeY'))
             or not 2<=camera['x']<=77 or not 90<=camera['eyeY']<=131
             or type(camera['teleportDuration']) is not int or camera['teleportDuration'] not in (1,2,3)):
         raise ValueError('Camera outside supported template bounds or interpolation range')
     camera['targetLeadBlocks']=camera['teleportDuration']-1
+    from .camera_rail import check_camera_clearance, compile_camera_rail
+    compile_camera_rail(camera,length)
     known={f['id'] for f in layout}
     if any(e['family'] not in known for e in candidates):raise ValueError('Unsupported family in event IR; provide a family mapping')
     grid={};notes=[];heads=[];repeaters=[];lights=[];families=[]
@@ -231,6 +233,7 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
         'claims':{'allMusicPhysicalRedstone':True,'runtimeVerified':False,'clientListening':False}}
     if plan:
         info['trackPlan']=plan
+    check_camera_clearance(camera,grid.values())
     return info,list(grid.values()),notes,heads,repeaters,lights
 
 
@@ -266,6 +269,8 @@ def merge_stage_module(info, blocks, notes, blueprint):
     if conflicts:
         raise ValueError(f'Stage module violates machine/camera clearance: {conflicts[:8]}')
     combined = blocks + added
+    from .camera_rail import check_camera_clearance
+    check_camera_clearance(camera,combined)
     lo = {k: min(info['origin'][k], min(b[k] for b in added)) for k in ('x','y','z')}
     hi = {k: max(info['origin'][k]+info['bounds'][size]-1, max(b[k] for b in added))
           for k,size in zip(('x','y','z'),('width','height','length'))}

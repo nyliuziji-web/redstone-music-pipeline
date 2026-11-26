@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,lightModules}){
  const NS='nevada_full',OBJ='nv_full',N=info.bounds.length,SEG=256,segments=Math.ceil(N/SEG);
  const cam=info.camera;
+ const firstPose=cam.rail?.frames[0]??[cam.x,cam.eyeY,0,0];
  const write=(name,lines)=>{const p=`${FN}/${name}.mcfunction`;fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,lines.join('\n')+'\n');};
  const set=b=>`setblock ${b.x} ${b.y} ${b.z} ${b.state}`;
  const snbt=v=>Array.isArray(v)?'['+v.map(snbt).join(',')+']':typeof v==='object'?'{'+Object.entries(v).map(([k,v])=>`${k}:${snbt(v)}`).join(',')+'}':typeof v==='boolean'?(v?'1b':'0b'):JSON.stringify(v);
@@ -58,7 +59,9 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   `scoreboard players set #busy ${OBJ} 1`,
   ...['wait_start','launch','finish','off','maintenance/wait','maintenance/restore','maintenance/advance'].map(n=>`schedule clear ${NS}:${n}`),
   ...bankTicks.flatMap(t=>[`schedule clear ${NS}:banks/pulse_${t}`,`schedule clear ${NS}:banks/off_${t}`]),
-  `execute as ${viewer} run spectate`,`gamemode creative ${viewer}`,`tag ${viewer} remove nv_full_view`,
+  `execute as ${viewer} run spectate`,`gamemode creative ${viewer}`,
+  ...(cam.rail?[`tp ${viewer} 37.5 111 68.5 180 4`]:[]),
+  `tag ${viewer} remove nv_full_view`,
   'kill @e[type=minecraft:item_display,tag=nv_full_camera]','stopsound @a record',
   fun('maintenance/break_loaded'),fun('release'),`scoreboard players set #seg ${OBJ} 0`,
   text('正在分段准备全曲轨道，完成后会显示“全曲就绪”。'),fun('maintenance/enter')]);
@@ -111,7 +114,9 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   `execute if score #seg ${OBJ} matches ..${segments-1} run ${fun('maintenance/enter')}`,
   `execute if score #seg ${OBJ} matches ${segments} run ${fun('ready')}`]);
  write('ready',[...readyWindow,`scoreboard players set #built ${OBJ} 1`,`scoreboard players set #busy ${OBJ} 0`,
-  text('Nevada 全曲就绪。按“开始试听”，或输入 /function nevada_full:start。','green'),say('READY')]);
+  text('Nevada 全曲就绪。按“开始试听”，或输入 /function nevada_full:start。','green'),
+  ...(cam.rail?[`tellraw @a ${JSON.stringify({text:'▶ 点这里开始跟拍',color:'gold',clickEvent:{action:'run_command',value:`/function ${NS}:start`}})}`]:[]),
+  say('READY')]);
  write('start',[
   `execute if score #busy ${OBJ} matches 1.. run ${text('轨道正在准备或演奏，请等待“全曲就绪”。','yellow','@s')}`,
   `execute if score #busy ${OBJ} matches 0 run ${fun('countdown')}`]);
@@ -119,10 +124,10 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   'tag @s add nv_full_view',`gamemode spectator ${viewer}`,'kill @e[type=minecraft:item_display,tag=nv_full_camera]',
   `execute store result storage ${NS}:camera duration int 1 run scoreboard players get #camDur ${OBJ}`,
   `${fun('camera/spawn')} with storage ${NS}:camera`,
-  `tp ${viewer} ${cam.x} ${cam.eyeY-1.62} 48.5 0 0`,`scoreboard players set #busy ${OBJ} 1`,...readyWindow,
+  `tp ${viewer} ${firstPose[0]} ${firstPose[1]-1.62} 48.5 ${firstPose[2]} ${firstPose[3]}`,`scoreboard players set #busy ${OBJ} 1`,...readyWindow,
   `title ${viewer} actionbar {"text":"准备开始 · Nevada 完整版"}`,sch('wait_start',10),
   `spectate ${camera} @a[tag=nv_full_view,limit=1]`]);
- write('camera/spawn',[`$summon minecraft:item_display ${cam.x} ${cam.eyeY} 48.5 {Tags:["nv_full_camera"],teleport_duration:$(duration),view_range:0f,shadow_radius:0f}`]);
+ write('camera/spawn',[`$summon minecraft:item_display ${firstPose[0]} ${firstPose[1]} 48.5 {Tags:["nv_full_camera"],Rotation:[${firstPose[2]}f,${firstPose[3]}f],teleport_duration:$(duration),view_range:0f,shadow_radius:0f}`]);
  const waitStart=[];for(let x=0;x<80;x+=16)for(let z=0;z<192;z+=16)waitStart.push(`execute unless loaded ${x+8} 110 ${z+8} run scoreboard players add #pending ${OBJ} 1`);
  write('wait_start',[`scoreboard players set #pending ${OBJ} 0`,...waitStart,
   `execute if score #pending ${OBJ} matches 1.. run ${sch('wait_start',10)}`,
@@ -157,12 +162,30 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   `execute store result storage ${NS}:camera z double 0.5 run scoreboard players get #z ${OBJ}`,
   `${fun('camera/teleport')} with storage ${NS}:camera`]);
  write('camera/teleport',[`$tp ${camera} ${cam.x} ${cam.eyeY} $(z) 0 0`]);
+ if(cam.rail){
+  const width=32, dispatch=[];
+  for(let i=0;i<cam.rail.frames.length;i+=width){
+   const segment=cam.rail.frames.slice(i,i+width), start=cam.rail.beginGT+i;
+   const name=`camera/rail_${i/width}`;
+   dispatch.push(`execute if score #q ${OBJ} matches ${start}..${start+segment.length-1} run ${fun(name)}`);
+   write(name,segment.map(([x,y,yaw,pitch],j)=>{
+    const tick=start+j, z=68.5+cam.targetLeadBlocks+tick;
+    // Explicit decimals suppress Minecraft's automatic block-centering for X.
+    return `execute if score #q ${OBJ} matches ${tick} run tp ${camera} ${x.toFixed(3)} ${y} ${z} ${yaw} ${pitch}`;
+   }));
+  }
+  write('position_camera',dispatch);
+ }
  write('finish',[say('FINISHED'),text('Nevada 全曲结束，正在复位轨道。','green'),fun('recover')]);
  for(const [name,player,value]of [['voice_harp','#voice',1],['voice_flute','#voice',0],['sustain','#sustain',1],['dry','#sustain',0]]){
   write(name,[`execute if score #busy ${OBJ} matches 0 run ${fun(`settings/request_${name}`)}`]);
   write(`settings/request_${name}`,[`scoreboard players set ${player} ${OBJ} ${value}`,fun('recover')]);
  }
  for(const d of [1,2,3]){
+  if(cam.rail){
+   write(`camera/buffer${d}`,[text('此演出使用已编排的跟拍镜头。','aqua','@s')]);
+   continue;
+  }
   write(`camera/buffer${d}`,[`execute if score #busy ${OBJ} matches 0 run ${fun(`camera/set${d}`)}`]);
   write(`camera/set${d}`,[`scoreboard players set #camDur ${OBJ} ${d}`,`scoreboard players set #camLead ${OBJ} ${d-1}`,text(`相机已设为 ${d} 刻缓冲。`,'aqua','@s')]);
  }
