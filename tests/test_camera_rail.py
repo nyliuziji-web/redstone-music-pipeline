@@ -24,3 +24,14 @@ class CameraRailTests(unittest.TestCase):
         ]}
         with self.assertRaisesRegex(ValueError,'cover -20'):
             compile_camera_rail(camera,40)
+
+    def test_follow_back_preserves_pose_and_shifts_longitudinal_target(self):
+        camera = {'targetLeadBlocks':2, 'followBack':8, 'keyframes':[
+            {'atGT':-20, 'x':37.5, 'eyeY':115.5, 'yaw':0, 'pitch':6},
+            {'atGT':60, 'x':37.5, 'eyeY':115.5, 'yaw':0, 'pitch':6},
+        ]}
+        compile_camera_rail(camera,40)
+        self.assertEqual(camera_target(camera,0),(37.5,115.5,62.5))
+        self.assertEqual(camera_target(camera,40),(37.5,115.5,102.5))
+        with self.assertRaisesRegex(ValueError, 'requires authored keyframes'):
+            compile_camera_rail({'followBack':8},40)

@@ -7,6 +7,8 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
  const NS='nevada_full',OBJ='nv_full',N=info.bounds.length,SEG=256,segments=Math.ceil(N/SEG);
  const cam=info.camera;
  const firstPose=cam.rail?.frames[0]??[cam.x,cam.eyeY,0,0];
+ const cameraBack=cam.followBack??0;
+ const firstZ=(48.5-cameraBack).toFixed(3);
  const write=(name,lines)=>{const p=`${FN}/${name}.mcfunction`;fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,lines.join('\n')+'\n');};
  const set=b=>`setblock ${b.x} ${b.y} ${b.z} ${b.state}`;
  const snbt=v=>Array.isArray(v)?'['+v.map(snbt).join(',')+']':typeof v==='object'?'{'+Object.entries(v).map(([k,v])=>`${k}:${snbt(v)}`).join(',')+'}':typeof v==='boolean'?(v?'1b':'0b'):JSON.stringify(v);
@@ -124,10 +126,10 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   'tag @s add nv_full_view',`gamemode spectator ${viewer}`,'kill @e[type=minecraft:item_display,tag=nv_full_camera]',
   `execute store result storage ${NS}:camera duration int 1 run scoreboard players get #camDur ${OBJ}`,
   `${fun('camera/spawn')} with storage ${NS}:camera`,
-  `tp ${viewer} ${firstPose[0]} ${firstPose[1]-1.62} 48.5 ${firstPose[2]} ${firstPose[3]}`,`scoreboard players set #busy ${OBJ} 1`,...readyWindow,
+  `tp ${viewer} ${firstPose[0]} ${firstPose[1]-1.62} ${firstZ} ${firstPose[2]} ${firstPose[3]}`,`scoreboard players set #busy ${OBJ} 1`,...readyWindow,
   `title ${viewer} actionbar {"text":"准备开始 · Nevada 完整版"}`,sch('wait_start',10),
   `spectate ${camera} @a[tag=nv_full_view,limit=1]`]);
- write('camera/spawn',[`$summon minecraft:item_display ${firstPose[0]} ${firstPose[1]} 48.5 {Tags:["nv_full_camera"],Rotation:[${firstPose[2]}f,${firstPose[3]}f],teleport_duration:$(duration),view_range:0f,shadow_radius:0f}`]);
+ write('camera/spawn',[`$summon minecraft:item_display ${firstPose[0]} ${firstPose[1]} ${firstZ} {Tags:["nv_full_camera"],Rotation:[${firstPose[2]}f,${firstPose[3]}f],teleport_duration:$(duration),view_range:0f,shadow_radius:0f}`]);
  const waitStart=[];for(let x=0;x<80;x+=16)for(let z=0;z<192;z+=16)waitStart.push(`execute unless loaded ${x+8} 110 ${z+8} run scoreboard players add #pending ${OBJ} 1`);
  write('wait_start',[`scoreboard players set #pending ${OBJ} 0`,...waitStart,
   `execute if score #pending ${OBJ} matches 1.. run ${sch('wait_start',10)}`,
@@ -169,7 +171,7 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
    const name=`camera/rail_${i/width}`;
    dispatch.push(`execute if score #q ${OBJ} matches ${start}..${start+segment.length-1} run ${fun(name)}`);
    write(name,segment.map(([x,y,yaw,pitch],j)=>{
-    const tick=start+j, z=68.5+cam.targetLeadBlocks+tick;
+    const tick=start+j, z=(68.5+cam.targetLeadBlocks+tick-cameraBack).toFixed(3);
     // Explicit decimals suppress Minecraft's automatic block-centering for X.
     return `execute if score #q ${OBJ} matches ${tick} run tp ${camera} ${x.toFixed(3)} ${y} ${z} ${yaw} ${pitch}`;
    }));

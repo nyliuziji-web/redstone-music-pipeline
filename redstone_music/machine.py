@@ -54,8 +54,8 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
         layout=[{**f,**changes.get(f['id'],{})} for f in layout]
     camera={'x':37.5,'eyeY':112.5,'teleportDuration':3,'targetLeadBlocks':2,'speedBlocksPerSecond':20}
     cam=options.get('camera',{})
-    if not isinstance(cam,dict) or not cam.keys() <= {'x','eyeY','teleportDuration','keyframes'}:
-        raise ValueError('Camera accepts x, eyeY, teleportDuration and optional keyframes')
+    if not isinstance(cam,dict) or not cam.keys() <= {'x','eyeY','teleportDuration','keyframes','followBack'}:
+        raise ValueError('Camera accepts x, eyeY, teleportDuration, followBack and optional keyframes')
     camera.update(cam)
     if (any(type(camera[k]) not in (int,float) or not math.isfinite(camera[k]) for k in ('x','eyeY'))
             or not 2<=camera['x']<=77 or not 90<=camera['eyeY']<=131

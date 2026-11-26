@@ -68,6 +68,8 @@ python run_pipeline.py preview-stage examples/track-study/canal-stage.json --out
 
 把 [稳镜头完整配置](../examples/track-study/steady-camera-layout.json) 的整个 JSON 对象作为顶层 `layout`。这条轨中央向前，朝向与俯仰始终一致，中段仅缓升再回落 1.5 格。关键帧从 -20 GT 到 `musicGT+20`，相邻至少 12 GT。换曲时重算终点与乐句时间，先定统一的朝向与俯仰。跟拍整体沿 +Z 前进。要换景别，优先用场景开合和少量平移，避免逐句摇头、点头或反复回正。
 
+两侧音符盒出画时，可在有关键帧的 `layout.camera` 中填写 `followBack`，让镜头相对演奏线后移 0–16 格。音乐时间和镜头速度照常。后移会改变距离与近景关系，要重新检查净空、实际画面和音量平衡。
+
 ```shell
 python run_pipeline.py run work/waterways/layered
 python run_pipeline.py status work/waterways/layered

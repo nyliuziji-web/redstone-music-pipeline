@@ -10,7 +10,12 @@ POSE_FIELDS = ('x', 'eyeY', 'yaw', 'pitch')
 
 def compile_camera_rail(camera, length):
     keys = camera.pop('keyframes', None)
+    back = camera.get('followBack', 0)
+    if type(back) not in (int, float) or not math.isfinite(back) or not 0 <= back <= 16:
+        raise ValueError('Camera followBack must be 0..16 blocks')
     if keys is None:
+        if back:
+            raise ValueError('Camera followBack requires authored keyframes')
         return
     if not isinstance(keys, list) or not 2 <= len(keys) <= 64 or length > 2400:
         raise ValueError('Camera rail requires 2..64 keyframes for a score up to 120 seconds')
@@ -39,7 +44,7 @@ def compile_camera_rail(camera, length):
 def camera_target(camera, tick):
     rail = camera.get('rail')
     x, y = rail['frames'][tick - rail['beginGT']][:2] if rail else (camera['x'], camera['eyeY'])
-    return x, y, 68.5 + camera['targetLeadBlocks'] + tick
+    return x, y, 68.5 + camera['targetLeadBlocks'] + tick - camera.get('followBack', 0)
 
 
 def check_camera_clearance(camera, blocks):
