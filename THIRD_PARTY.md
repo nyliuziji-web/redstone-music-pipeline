@@ -40,6 +40,8 @@ The original 16-bar composition study, 20-second timbre study and 16-second quie
 
 The unmodified sparse voxel module from [harrynull/mcbuild](https://github.com/harrynull/mcbuild), commit `34ce86372d4c23f4d83d4e24fc256cb399d6c3e3`, is vendored in `redstone_music/_vendor/mcbuild_voxel.py`. Its MIT license is preserved in `integrations/mcbuild/LICENSE`, with exact source/hash in provenance.json. Hosted agents, NeoForge runtime and Minecraft textures are excluded.
 
+[lzif/mcbuilder](https://github.com/lzif/mcbuilder) is a separate optional MIT tool, tested at `b0b24621a7ea6bd7cfd13659b11327cac3899e09`. It is independently installed as described in the architecture guide. Its local preview cache contains game models and textures and stays outside the source kit. `examples/hutong-study/` contains original design code and placement recipes under the project MIT license.
+
 The standard Gradle wrapper uses upstream Gradle's Apache-2.0 license, retained in `client/gradle/LICENSE-Gradle.txt`. The Fabric build downloads its declared dependencies separately. Photon and its dependencies are not bundled; the exact release license and backend comparison remain separate checks.
 
 `examples/night-study/` contains the independent agent's original MIDI and declarative night-study designs, dedicated under CC0-1.0 with no external music or samples. They are candidate educational assets, not a grant of artistic approval.

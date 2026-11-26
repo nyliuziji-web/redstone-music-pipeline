@@ -61,7 +61,7 @@ python run_pipeline.py handoff projects/my-song
 | MIDI到音符盒、音色连续性、延音近似 | [noteblock-arranger](skills/noteblock-arranger/SKILL.md) |
 | 采样、调音、分槽、声音包与混音 | [sound-designer](skills/sound-designer/SKILL.md) |
 | 实体机器、时序、加载、相机和复位 | [redstone-engineer](skills/redstone-engineer/SKILL.md) |
-| 建筑模块、轨道外形、固定光和视线 | [stage-designer](skills/stage-designer/SKILL.md)与[场景收尾及 Nevada 材质光影](docs/SCENE_FINISH_AND_LOOK.md) |
+| 建筑与街区、轨道外形、视线 | [Minecraft 建筑模块](docs/MINECRAFT_ARCHITECTURE.md)、[stage-designer](skills/stage-designer/SKILL.md)与[场景收尾及 Nevada 材质光影](docs/SCENE_FINISH_AND_LOOK.md) |
 | 粒子动作、长音轨迹、乐句演出和字幕 | [原版轨道粒子教程](docs/VANILLA_RAIL_PARTICLES.md)与 [show-director](skills/show-director/SKILL.md) |
 | 验证、安装、录制与成片交付 | [verify-and-deliver](skills/verify-and-deliver/SKILL.md) |
 

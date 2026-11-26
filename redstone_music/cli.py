@@ -74,6 +74,15 @@ def main(argv=None):
     p.add_argument('a'); p.add_argument('b'); p.add_argument('--out', required=True)
     p = sub.add_parser('preview-stage')
     p.add_argument('blueprint'); p.add_argument('--out', required=True); p.add_argument('--protection')
+    a = sub.add_parser('architecture', help='Build and place offline Minecraft architectural modules')
+    architecture = a.add_subparsers(dest='architecture_command', required=True)
+    p = architecture.add_parser('assets', help='Fetch Java 1.21.1 preview assets into a local cache')
+    p.add_argument('--tool-python', required=True); p.add_argument('--cache', required=True)
+    p = architecture.add_parser('build', help='Run the optional mcbuilder on an explicit local design')
+    p.add_argument('source'); p.add_argument('--tool-python', required=True); p.add_argument('--cache', required=True)
+    p.add_argument('--out', required=True); p.add_argument('--views', default='az045_el025;az225_el025;top')
+    p = architecture.add_parser('assemble', help='Turn vanilla structures into a protected stage blueprint')
+    p.add_argument('recipe'); p.add_argument('--out', required=True); p.add_argument('--machine')
     p = sub.add_parser('compile-show')
     p.add_argument('score'); p.add_argument('--out', required=True); p.add_argument('--style')
     game = sub.add_parser('game').add_subparsers(dest='game_command', required=True)
@@ -119,6 +128,14 @@ def main(argv=None):
         elif args.command == 'learn':
             from .toolkit_examples import create_learning_example
             result = create_learning_example(args.out)
+        elif args.command == 'architecture':
+            from . import architecture
+            if args.architecture_command == 'assets':
+                result = architecture.fetch_assets(args.tool_python, args.cache)
+            elif args.architecture_command == 'build':
+                result = architecture.build(args.source, args.tool_python, args.cache, args.out, args.views)
+            else:
+                result = architecture.assemble(args.recipe, args.out, args.machine)
         elif args.command in ('inspect-source', 'analyze-music', 'analyze-audio', 'transcribe-melody', 'edit-music-region', 'plan-noteblocks', 'build-soundpack', 'render-preview', 'compare-candidates'):
             from . import music_tools as mt
             if args.command == 'inspect-source': result = mt.inspect_source(args.source, args.out)

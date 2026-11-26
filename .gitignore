@@ -16,6 +16,7 @@
 # Local environments and Python build products
 .venv/
 .audio-venv/
+.architecture-env/
 .separation-venv/
 venv/
 env/

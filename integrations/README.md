@@ -6,6 +6,8 @@
 
 `preview-stage` 使用固定提交的 MIT mcbuild `VoxelGrid`，在本项目的受限 JSON 蓝图接口中生成方块清单、材料统计、保护区冲突和四向 CPU 预览。代码及许可来源见 [mcbuild/provenance.json](mcbuild/provenance.json)。不会调用其托管模型主控、安装其 NeoForge 模组或分发 Minecraft 纹理。预览使用简色和部分台阶/楼梯轮廓；游戏注册表、实际光照、物理和红石行为须在客户端复核。
 
+`architecture build` 通过指定的独立 Python 调用另一项目 lzif/mcbuilder，验证 Java 1.21.1 方块、生成原版模型预览和结构 NBT。`architecture assemble` 将原版 NBT 按保存的布局和朝向变成现有机器可读的阶段蓝图。组装可独立使用，无需安装外部构件程序。安装锁定版本、练习和兼容边界见[建筑模块教程](../docs/MINECRAFT_ARCHITECTURE.md)。
+
 `compile-show` 将音符起音/延音或人工编写的 show score 编译为独立效果资产，支持 node、ring、helix、bezier 和固定屏幕字幕。效果与物理音乐机共用 `musicGT` 时钟，长音由持续几何表现，声音 retrigger 不额外制造起音效果。此接口允许 agent 编排乐句、空间和配色，不把默认参数当成审美结论。
 
 `client/` 是标准 Fabric Loom/Gradle、Minecraft Java 1.21.1 的参照客户端源码。`build-client` 需要显式可用的 Java21 JDK；首次构建联网下载公开构建依赖，后续重用 Gradle 缓存。流水线通过 `runtime.clientJar` 引用构建产物并嵌入项目效果数据；旧 intermediary 编译入口仅接受显式 `runtime.clientRuntime`，不再从 Nevada 私有目录自动寻找环境。
