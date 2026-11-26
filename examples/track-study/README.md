@@ -2,6 +2,8 @@
 
 这个设计使用原创织体练习的 16 秒有织体 MIDI。前段的铜门收拢视线，中段把和声引到较开阔、斜向的潮纹，末段用稀疏的浅色月弧把视线交还主题。两个段界落在奇数刻，便于检查每段的局部奇偶与全曲时间是否一致。
 
+[完整教程](../../docs/PHRASE_TO_WORLD.md)还会使用本目录的建筑蓝图与稳镜头配置，讲解如何处理施工冲突和实机复查。
+
 ```shell
 python run_pipeline.py texture-study projects/waterways
 python run_pipeline.py arrange-game projects/waterways/layered.mid --decisions examples/track-study/waterways-arrangement.json --profile projects/waterways/sound-bank/bank/profile.json --out projects/waterways/game-preview

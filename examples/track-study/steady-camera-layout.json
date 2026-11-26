@@ -1,0 +1,15 @@
+{
+  "camera": {
+    "x": 37.5,
+    "eyeY": 112.5,
+    "teleportDuration": 3,
+    "keyframes": [
+      {"atGT":-20,"x":37.5,"eyeY":112.5,"yaw":0,"pitch":6},
+      {"atGT":  0,"x":37.5,"eyeY":112.5,"yaw":0,"pitch":6},
+      {"atGT":103,"x":37.5,"eyeY":112.5,"yaw":0,"pitch":6},
+      {"atGT":200,"x":37.5,"eyeY":114.0,"yaw":0,"pitch":6},
+      {"atGT":300,"x":37.5,"eyeY":112.5,"yaw":0,"pitch":6},
+      {"atGT":340,"x":37.5,"eyeY":112.5,"yaw":0,"pitch":6}
+    ]
+  }
+}

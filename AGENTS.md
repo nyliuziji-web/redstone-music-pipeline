@@ -5,7 +5,7 @@ Start with [START_HERE](START_HERE.md), then the [producer skill](skills/redston
 Use the executable pipeline. Start with `python run_pipeline.py doctor` and read `PIPELINE.md`. For a new song, initialize a new project with a user-supplied MIDI master or a brief/reference. Never reuse a previous song's project directory.
 
 1. Run the project. Successful stages are immutable, hashed and reusable. Read the returned `releasePath`, warnings and validation boundaries.
-2. If the project is `awaiting_agent` or a stage fails, inspect `tasks/<id>/task.json`, `prompt.md`, the failed staging diagnostics, and current `state.json`.
+2. If the project is `awaiting_agent` or a stage fails, inspect `tasks/<id>/task.json`, `TASK.md`, the failed staging diagnostics, and current `state.json`.
 3. Delegate the task to the matching professional role when delegation is authorized and available. Give only the project contract, task, relevant inputs and the role guide in this directory. Avoid passing unrelated conversations or permitting shared artifact edits. If delegation is unavailable, perform the role yourself using the same result contract.
 4. Claim the task; the specialist writes only to its designated `output/` directory, including a JSON result matching `resultContract`. The main agent calls `complete-task` and then reruns the pipeline. Task completion never grants technical validation.
 5. A required engine change is implemented in source, tested, then rerun. Do not force an unsupported idea through the narrow configPatch interface or delete assertions to make a stage pass.

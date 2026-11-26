@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Three waterways: narrow entry, open crossing, near lanterns",
+  "operations": [
+    {"op":"fill","min":[31,88,80],"max":[43,88,182],"block":"minecraft:deepslate_tiles"},
+    {"op":"fill","min":[26,88,183],"max":[48,88,300],"block":"minecraft:polished_deepslate"},
+    {"op":"fill","min":[32,88,301],"max":[42,88,401],"block":"minecraft:deepslate_tiles"},
+    {"op":"frame","min":[28,128,96],"max":[46,132,99],"block":"minecraft:waxed_cut_copper"},
+    {"op":"fill","min":[31,129,96],"max":[43,129,96],"block":"minecraft:ochre_froglight"},
+    {"op":"frame","min":[20,128,230],"max":[54,132,233],"block":"minecraft:dark_prismarine"},
+    {"op":"fill","min":[30,129,230],"max":[44,129,230],"block":"minecraft:verdant_froglight"},
+    {"op":"frame","min":[30,128,368],"max":[44,132,371],"block":"minecraft:smooth_quartz"},
+    {"op":"fill","min":[32,129,368],"max":[42,129,368],"block":"minecraft:pearlescent_froglight"}
+  ]
+}

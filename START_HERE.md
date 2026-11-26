@@ -26,9 +26,9 @@ python run_pipeline.py learn projects/lesson
 
 | 用户有什么 | 从哪开始 |
 |---|---|
-| 完整可信MIDI | 体检、明确角色和段落，进入[音符盒编配](skills/noteblock-arranger/SKILL.md) |
-| 简谱、钢琴改编或待改善MIDI | [音乐导演](skills/music-director/SKILL.md)，先识别缺失的音乐功能与参考 |
-| 原曲录音/分轨 | [音乐导演](skills/music-director/SKILL.md)，先对齐和体检，再选择转写/校对路线 |
+| 原曲录音、分轨、简谱或待改善 MIDI | [从混音校出可信母版](docs/MIX_TO_MIDI.md)。有谱或分轨时先标可信部分，只转写缺失声部 |
+| 完整可信 MIDI | [制作独立游戏演奏谱](docs/PERFORMANCE_AND_TRACK.md#1-先做一段游戏编曲)。先对照母版、改编报告与游戏采样试听 |
+| 已试听的 Minecraft 演奏谱与声音包 | [从乐句到轨道、建筑与稳镜头](docs/PHRASE_TO_WORLD.md)。用触发谱、声音 profile 与资源包设计代表段 |
 
 只给网址时，先取得并检查实际文件；网页描述不能作为已听到原曲、已拿到乐谱的证据。
 
@@ -66,7 +66,7 @@ python run_pipeline.py handoff projects/my-song
 
 ## 环境与完成范围
 
-Minecraft机制基线为Java1.21.1、JDK21、Fabric。游戏、账号和受保护素材由操作者提供；工具环境与合法本地资源通过显式路径接入，不使用旧项目私有目录。见[环境教程](docs/ENVIRONMENT.md)。
+实体红石、声音包和跟拍支持 Minecraft Java 1.21.1 原版，运行使用 JDK 21。Fabric 用于可选客户端效果。游戏、账号和受保护素材由操作者提供，工具环境与本地资源通过实际路径接入。见[环境教程](docs/ENVIRONMENT.md)。
 
 离线生成、服务端触发、客户端画面/声音、艺术认可与成片检查分别记录。当前可执行能力和缺项以`capabilities`及真实报告为准；研究候选与拟议能力不自动可用。
 
