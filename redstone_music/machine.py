@@ -30,7 +30,10 @@ def fingerprint_inputs(ctx):
 def dump(path, data): Path(path).write_text(json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
 
 
-def compile_blocks(events, title, namespace, objective, decorate=True, layout_config=None):
+def compile_blocks(events, title, namespace, objective, decorate=True, layout_config=None,
+                   track_design=None, adaptive=False):
+    from .track_design import design_track, local_tick, PALETTES
+
     candidates=events['candidates']; length=max(1,int(events['musicGT']))
     total=max(256,math.ceil((80+length+48)/16)*16)
     layout=json.loads((Path(__file__).parent/'assets/layout.json').read_text(encoding='utf-8'))
@@ -69,7 +72,12 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
     def block(name,**props):return 'minecraft:'+name+('['+','.join(f'{k}={str(v).lower()}' for k,v in props.items())+']' if props else '')
     def rep(facing='north',delay=1,locked=False,powered=False):return block('repeater',facing=facing,delay=delay,locked=locked,powered=powered)
     slab=block('deepslate_tile_slab',type='top',waterlogged=False)
-    for f in layout:
+    plan, lanes = None, []
+    if adaptive or track_design is not None:
+        preferred = {f['id']:(37+f['x'],112+f['y']) for f in options.get('families',[])
+                     if 'x' in f and 'y' in f}
+        plan, lanes = design_track(events,known,track_design,preferred,camera)
+    for f in ([] if plan else layout):
         group=[e for e in candidates if e['family']==f['id']]
         if not group:continue
         grouped=defaultdict(list)
@@ -77,43 +85,56 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
         rows=max(math.ceil(len(a)/3) for a in grouped.values());cx=37+math.floor(f['x']+.5);cy=112+math.floor(f['y']+.5)
         if cy+(rows-1)*6+2>=134:raise ValueError(f'{f["id"]} exceeds template polyphony; split/revoice this family')
         families.append({'id':f['id'],'label':f['label'],'centerX':cx,'centerY':cy,'rows':rows,'notes':len(group)})
+        ordered={q:sorted(items,key=lambda e:(-e.get('gainProxy',1),e['note'])) for q,items in grouped.items()}
         for row in range(rows):
-            for parity in (0,1):
-                x=cx+(2 if parity else -2);y=cy+row*6;z0=16+parity
-                for z in range(z0,total-1):
-                    put(x,y-1,z,slab)
-                    state=block('polished_deepslate') if (z-z0)%2==0 else rep()
-                    put(x,y,z,state)
-                    if ':repeater[' in state:repeaters.append({'x':x,'y':y,'z':z,'state':state})
-                if parity==0:
-                    state=rep(delay=3);put(x,y-1,15,block('deepslate_bricks'));put(x,y,15,state)
-                    repeaters.append({'x':x,'y':y,'z':15,'state':state});heads.append({'x':x,'y':y,'z':14,'on':block('redstone_block'),'off':block('air')})
-                else:
-                    put(x,y-1,11,block('sticky_piston',facing='up',extended=False));put(x,y,11,block('oak_log',axis='y'))
-                    for i in range(1,4):put(x,y,11+i,block('oak_leaves',persistent=True,distance=i,waterlogged=False))
-                    for rx,rz,state in [(x,16,rep(locked=True)),(x+1,16,rep('east',powered=True))]:
-                        put(rx,y-1,rz,block('deepslate_bricks'));put(rx,y,rz,state);repeaters.append({'x':rx,'y':y,'z':rz,'state':state})
-                    put(x+2,y-1,16,block('deepslate_bricks'));put(x+2,y,16,block('redstone_torch',lit=True))
-                    heads.extend([{'x':x-1,'y':y-1,'z':11,'on':block('redstone_block'),'off':block('air')},
-                                  {'x':x+2,'y':y-1,'z':16,'on':block('redstone_block'),'off':block('deepslate_bricks')}])
-                    put(x,y,15,block('observer',facing='north',powered=False))
-        for q,items in grouped.items():
-            ordered=sorted(items,key=lambda e:(-e.get('gainProxy',1),e['note']))
-            for row in range(rows):
-                batch=ordered[row*3:row*3+3]
+            lanes.append(({'family':f['id'],'row':row,'x':cx,'y':cy+row*6,'launchGT':0,'lastGT':length-1},
+                          {q:items[row*3:row*3+3] for q,items in ordered.items() if items[row*3:row*3+3]}))
+    if plan:
+        labels={item['id']:item['label'] for item in layout}
+        for section in plan['sections']:
+            for lane in section['lanes']:
+                families.append({'id':lane['family'],'label':labels[lane['family']],'centerX':lane['x'],
+                                 'centerY':lane['y'],'rows':1,'notes':lane['events'],'phrase':section['index']})
+    for lane,grouped in lanes:
+        cx,y,start,row=lane['x'],lane['y'],lane['launchGT'],lane['row']
+        for parity in (0,1):
+            if plan and not any((q-start)%2==parity for q in grouped):
+                continue
+            x=cx+(2 if parity else -2);z0=start+16+parity
+            terminal=lane['lastGT']+83 if plan else total-1
+            for z in range(z0,terminal):
+                put(x,y-1,z,slab)
+                state=block('polished_deepslate') if (z-z0)%2==0 else rep()
+                put(x,y,z,state)
+                if ':repeater[' in state:repeaters.append({'x':x,'y':y,'z':z,'state':state})
+            if parity==0:
+                state=rep(delay=3);put(x,y-1,start+15,block('deepslate_bricks'));put(x,y,start+15,state)
+                repeaters.append({'x':x,'y':y,'z':start+15,'state':state})
+                heads.append({'x':x,'y':y,'z':start+14,'on':block('redstone_block'),'off':block('air'),'launchGT':start})
+            else:
+                put(x,y-1,start+11,block('sticky_piston',facing='up',extended=False));put(x,y,start+11,block('oak_log',axis='y'))
+                for i in range(1,4):put(x,y,start+11+i,block('oak_leaves',persistent=True,distance=i,waterlogged=False))
+                for rx,rz,state in [(x,start+16,rep(locked=True)),(x+1,start+16,rep('east',powered=True))]:
+                    put(rx,y-1,rz,block('deepslate_bricks'));put(rx,y,rz,state);repeaters.append({'x':rx,'y':y,'z':rz,'state':state})
+                put(x+2,y-1,start+16,block('deepslate_bricks'));put(x+2,y,start+16,block('redstone_torch',lit=True))
+                heads.extend([{'x':x-1,'y':y-1,'z':start+11,'on':block('redstone_block'),'off':block('air'),'launchGT':start},
+                              {'x':x+2,'y':y-1,'z':start+16,'on':block('redstone_block'),'off':block('deepslate_bricks'),'launchGT':start}])
+                put(x,y,start+15,block('observer',facing='north',powered=False))
+        for q,batch in grouped.items():
                 if not batch:continue
                 if len(batch)==3 and batch[2]['instrument']=='hat':
                     alt=next((i for i,e in enumerate(batch) if e['instrument']!='hat'),None)
                     if alt is None:raise ValueError('Three hats on one tick need separate physical lanes')
                     batch[alt],batch[2]=batch[2],batch[alt]
-                parity=q%2;x=cx+(2 if parity else -2);y=cy+row*6;z=80+q;inward=1 if x<37 else -1
+                parity=(q-start)%2;x=cx+(2 if parity else -2);z=80+q;inward=1 if x<37 else -1
                 for i,e in enumerate(batch):
                     nx=x+(inward if i==0 else -inward) if i<2 else x;ny=y if i<2 else y+1
                     by=y-1 if i<2 else y;bx=nx if i<2 else x
                     put(bx,by,z,e['baseBlock'],replace=(bx==x and by==y))
                     if e['baseBlock']=='minecraft:sand' and (bx,by-1,z) not in grid:put(bx,by-1,z,block('deepslate_bricks'))
                     put(nx,ny,z,block('note_block',instrument=e['instrument'],note=e['note'],powered=False))
-                    notes.append({**e,'q':q,'x':nx,'y':ny,'z':z,'base':{'x':bx,'y':by,'z':z},'clockLane':{'x':x,'y':y,'parity':parity,'row':row}})
+                    notes.append({**e,'q':q,'x':nx,'y':ny,'z':z,'base':{'x':bx,'y':by,'z':z},
+                                  'clockLane':{'x':x,'y':y,'parity':parity,'row':row,'launchGT':start}})
                 put(x,y-1,z,block('redstone_wire',power=0,north='none',south='none',east='none',west='none'),replace=True)
                 put(x,y-2,z,block('polished_blackstone'),replace=True)
                 positions=[(-1,-2),(1,-2),(0,-3)] if len(batch)==3 else [(-1,-2),(1,-2)] if len(batch)==2 else [(0,-3)]
@@ -129,7 +150,59 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
         put(x,111,63,block('stone_button',face='floor',facing='north',powered=False))
         put(x,110,62,block('oak_sign',rotation=8,waterlogged=False),nbt={'id':'minecraft:sign','is_waxed':True,'front_text':{'messages':[json.dumps({'text':label},ensure_ascii=False),'""','""','""'],'color':'black','has_glowing_text':True}})
     decor=0
-    if decorate:
+    if decorate and plan:
+        critical = {(b['x'],b['y'],b['z']) for b in grid.values()
+                    if any(t in b['state'] for t in ('repeater','wire','observer','piston','torch','note_block'))}
+        def accent(x,y,z,name):
+            nonlocal decor
+            if not (0<=x<80 and 88<=y<134 and 0<=z<total) or (x,y,z) in grid:
+                return
+            if abs(x-camera['x'])<=2 and abs(y-camera['eyeY'])<=2:
+                return
+            if any((x+dx,y+dy,z+dz) in critical for dx in range(-2,3)
+                   for dy in range(-2,3) for dz in range(-2,3)):
+                return
+            put(x,y,z,block(name))
+            decor+=1
+        for section in plan['sections']:
+            a,b=section['beginGT'],section['endGT']
+            metal,stone,soft_light=PALETTES[section['style']]
+            radius=9+2*section['spread']
+            contour=section['turn']
+            # A curved pair of suspended ribs responds to the width of each phrase.
+            for q in range(a,b):
+                p=(q-a)/max(1,b-a)
+                sweep=round(math.sin(math.pi*p)*5*contour)
+                for side in (-1,1):
+                    x=37+sweep+side*(radius+round(3*math.sin(math.pi*p)))
+                    y=89+max(0,section['terrace'])+round(5*math.sin(math.pi*p))
+                    accent(x,y,80+q,metal if (q-a)%8 else soft_light)
+                    accent(x+side,y-1,80+q,stone)
+            for q,height in [(a,8),(a+(b-a)//2,12),(b-1,7)]:
+                z=80+q
+                for side in (-1,1):
+                    for h in range(height):
+                        accent(37+side*(radius+4-h//3),89+h,z,metal if h%4 else soft_light)
+                        accent(37+side*(radius+5-h//3),89+h,z,stone)
+            # The ceiling is visible from the forward moving camera. A compact
+            # copper vault, slanted tidal ribs, and lighter moon arcs carry
+            # different silhouettes as well as different materials.
+            span = radius+5
+            step = {'copper':16,'tide':12,'moon':21}[section['style']]
+            for q in range(a+4,b-4,step):
+                for dx in range(-span,span+1):
+                    u = dx/span
+                    if section['style']=='copper':
+                        h,skew = round(3*(1-abs(u))),0
+                    elif section['style']=='tide':
+                        h,skew = round(3*(1-u*u)),round(u*3*contour)
+                    else:
+                        h,skew = round(3*math.sqrt(max(0,1-u*u))),round(abs(u)*3)
+                    if a<=q+skew<b:
+                        accent(37+dx,129+h,80+q+skew,soft_light if dx%5==0 else metal)
+                        if abs(dx)%5==0:
+                            accent(37+dx,129+h,81+q+skew,stone)
+    elif decorate:
         protected=set()
         for b in list(grid.values()):
             if any(t in b['state'] for t in ('repeater','wire','observer','piston','torch','note_block')):
@@ -156,6 +229,8 @@ def compile_blocks(events, title, namespace, objective, decorate=True, layout_co
         'clock':{'musicBeginsAfterLaunchGT':70},'families':families,'noteEvents':len(notes),'onsets':sum(n['kind']!='retrigger' for n in notes),
         'retriggers':sum(n['kind']=='retrigger' for n in notes),'blocks':len(grid),'decorativeBlocks':decor,
         'claims':{'allMusicPhysicalRedstone':True,'runtimeVerified':False,'clientListening':False}}
+    if plan:
+        info['trackPlan']=plan
     return info,list(grid.values()),notes,heads,repeaters,lights
 
 
@@ -207,7 +282,20 @@ def merge_stage_module(info, blocks, notes, blueprint):
 def run(ctx):
     out=Path(ctx['out']);config=ctx['config'];events=json.loads((Path(ctx['deps']['sound'])/'events.json').read_text(encoding='utf-8'))
     slug=config['slug'];namespace='rm_'+slug;objective='rm_'+hashlib.sha256(slug.encode()).hexdigest()[:8]
-    info,blocks,notes,heads,repeaters,lights=compile_blocks(events,config.get('title',slug),namespace,objective,config.get('machine',{}).get('decorate',True),config.get('layout'))
+    machine = config.get('machine',{})
+    design = config.get('inputs',{}).get('trackDesign')
+    if design:
+        p = Path(design)
+        p = p if p.is_absolute() else Path(ctx['project'])/p
+        design=json.loads(p.read_text(encoding='utf-8-sig'))
+    mode=machine.get('trackMode','fixed')
+    if mode not in ('fixed','score'):
+        raise ValueError('machine.trackMode must be score or fixed')
+    info,blocks,notes,heads,repeaters,lights=compile_blocks(
+        events,config.get('title',slug),namespace,objective,machine.get('decorate',True),
+        config.get('layout') or machine.get('layout'),design,mode=='score')
+    if 'trackPlan' in info:
+        dump(out/'track-plan.json',info['trackPlan'])
     stage=config.get('inputs',{}).get('stageModule')
     if stage:
         p=Path(stage);p=p if p.is_absolute() else Path(ctx['project'])/p

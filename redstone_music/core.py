@@ -37,7 +37,7 @@ DOMAINS = {
 }
 STAGE_INPUTS = {
     "music": ("midi", "approvedEvents", "referenceAudio"),
-    "sound": ("soundPack", "soundProfile", "adaptationPlan"), "machine": ("stageModule",), "visuals": ("captions", "showScore"),
+    "sound": ("soundPack", "soundProfile", "adaptationPlan", "gameArrangement"), "machine": ("stageModule","trackDesign"), "visuals": ("captions", "showScore"),
     "validate": (), "release": (),
 }
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -157,9 +157,10 @@ def initialize(project, title=None, midi=None, approved_events=None, slug=None, 
                    "approvedEvents": str(Path(approved_events).resolve()) if approved_events else None,
                    "referenceAudio": str(Path(reference_audio).resolve()) if reference_audio else None,
                    "soundPack": None, "captions": None,
-                   "soundProfile": None, "adaptationPlan": None, "stageModule": None, "showScore": None},
+                   "soundProfile": None, "adaptationPlan": None, "gameArrangement": None,
+                   "trackDesign": None, "stageModule": None, "showScore": None},
         "sound": {"retrigger": True, "profile": "vanilla", "adapter":"role-consistent", "consistency":"role"},
-        "machine": {"decorate": True}, "visuals": {"enabled": True},
+        "machine": {"decorate": True,"trackMode":"score"}, "visuals": {"enabled": True},
         "runtime": {"serverValidation": False, "java": None, "serverJar": None,
                     "traceAgent": None, "acceptEula": False},
         "policy": {"maxAttempts": 2, "maxDurationSeconds": 900, "maxNotes": 50000, "maxInputMiB": 256},
@@ -349,11 +350,13 @@ ROLE_SKILLS = {'music':'music-director','sound':'sound-designer','machine':'reds
 ROLE_DOMAINS = {"music": {"music"}, "sound": {"sound"}, "machine": {"machine", "layout"},
                 "visuals": {"visuals"}, "quality": {"validation", "runtime"},
                 "producer": set(), "arrangement": {"sound"}, "stage": {"machine"}}
-ROLE_IMPORTS = {"music": {"midi", "adaptationPlan"}, "sound": {"soundPack", "soundProfile"}, "machine": {"stageModule"},
+ROLE_IMPORTS = {"music": {"midi", "adaptationPlan"}, "sound": {"soundPack", "soundProfile"}, "machine": {"stageModule","trackDesign"},
                 "visuals": {"captions", "showScore"}, "quality": set(), "producer": set(),
-                "arrangement": {"adaptationPlan", "soundProfile"}, "stage": {"stageModule"}}
+                "arrangement": {"adaptationPlan", "soundProfile","gameArrangement"}, "stage": {"stageModule"}}
 TASK_KINDS = {"review": {"review"}, "music_import": {"midi"},
               "arrangement": {"adaptationPlan", "review"},
+              "game_arrangement": {"gameArrangement","review"},
+              "track_design": {"trackDesign","review"},
               "sound_profile": {"soundProfile", "soundPack", "review"},
               "show_score": {"showScore", "review"}, "stage_module": {"stageModule", "review"},
               "engine_change": {"review", "proposal"}}
@@ -492,7 +495,8 @@ def complete_task(project, task_id, result):
             if key == "midi":
                 from .midi import parse_midi
                 parse_midi(resource.read_bytes())
-            elif key in {"review", "captions", "adaptationPlan", "soundProfile", "stageModule", "showScore", "proposal"}:
+            elif key in {"review", "captions", "adaptationPlan", "soundProfile", "stageModule", "showScore", "proposal",
+                         "gameArrangement","trackDesign"}:
                 document = read_json(resource)
                 if not isinstance(document, dict):
                     raise PipelineError(f"{key} must be a JSON object")
@@ -500,7 +504,8 @@ def complete_task(project, task_id, result):
                         and isinstance(document.get("evidence"), list) and isinstance(document.get("limitations"), list)):
                     raise PipelineError("Review requires summary, evidence and limitations")
                 contracts = {'soundProfile': 'sound-profile', 'stageModule': 'stage-module', 'showScore': 'show-score',
-                             'adaptationPlan': 'adaptation-plan'}
+                             'adaptationPlan': 'adaptation-plan', 'gameArrangement': 'game-arrangement',
+                             'trackDesign': 'track-design'}
                 if key in contracts:
                     from .contracts import validate_contract
                     validate_contract(document, contracts[key])
@@ -539,7 +544,7 @@ def complete_task(project, task_id, result):
             if not isinstance(values, dict):
                 raise PipelineError("Configuration domains must be objects")
             supported = {'music': {}, 'sound': {'profile': str, 'retrigger': bool, 'adapter':str, 'consistency':str},
-                         'machine': {'decorate': bool}, 'layout': {'families': list, 'camera': dict}, 'visuals': {'enabled': bool},
+                         'machine': {'decorate': bool,'trackMode':str}, 'layout': {'families': list, 'camera': dict}, 'visuals': {'enabled': bool},
                          'validation': {}, 'runtime': {'serverValidation': bool, 'timeoutSeconds': int}}[domain]
             if not values.keys() <= supported.keys():
                 raise PipelineError(f'Unsupported configuration keys in {domain}; a code change is needed')

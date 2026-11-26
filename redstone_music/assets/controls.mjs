@@ -18,6 +18,17 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
  const viewer='@a[tag=nv_full_view]';
  const noteState=(n,instrument=n.instrument)=>`minecraft:note_block[instrument=${instrument},note=${n.note},powered=false]`;
  const wire='minecraft:redstone_wire[power=0,north=none,south=none,east=none,west=none]';
+ const banks=new Map();
+ for(const head of heads){
+  const tick=head.launchGT??0;
+  if(!banks.has(tick))banks.set(tick,[]);
+  banks.get(tick).push(head);
+ }
+ const bankTicks=[...banks.keys()].sort((a,b)=>a-b);
+ for(const tick of bankTicks){
+  write(`banks/pulse_${tick}`,[...banks.get(tick).map(h=>set({...h,state:h.on})),sch(`banks/off_${tick}`,6)]);
+  write(`banks/off_${tick}`,banks.get(tick).map(h=>set({...h,state:h.off})));
+ }
  const release=[];
  for(let z=0;z<N;z+=768)release.push(`forceload remove 0 ${z} 79 ${Math.min(z+767,N-1)}`);
  write('release',release);
@@ -46,6 +57,7 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
  write('maintenance/begin',[
   `scoreboard players set #busy ${OBJ} 1`,
   ...['wait_start','launch','finish','off','maintenance/wait','maintenance/restore','maintenance/advance'].map(n=>`schedule clear ${NS}:${n}`),
+  ...bankTicks.flatMap(t=>[`schedule clear ${NS}:banks/pulse_${t}`,`schedule clear ${NS}:banks/off_${t}`]),
   `execute as ${viewer} run spectate`,`gamemode creative ${viewer}`,`tag ${viewer} remove nv_full_view`,
   'kill @e[type=minecraft:item_display,tag=nv_full_camera]','stopsound @a record',
   fun('maintenance/break_loaded'),fun('release'),`scoreboard players set #seg ${OBJ} 0`,
@@ -63,7 +75,9 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
   const clear=[];for(let z=lo;z<=hi;z+=8)clear.push(`fill 0 88 ${z} 79 133 ${Math.min(z+7,hi)} minecraft:air`);
   write(`build/segment_${i}`,[...clear,...slice.map(place)]);
   const reps=resetRepeaters.filter(b=>b.z>=lo&&b.z<=hi);
-  write(`maintenance/clear_${i}`,[...reps.map(b=>set({...b,state:'minecraft:air'})),...(i===0?[fun('off')]:[])]);
+  const localHeads=heads.filter(b=>b.z>=lo&&b.z<=hi);
+  write(`maintenance/clear_${i}`,[...reps.map(b=>set({...b,state:'minecraft:air'})),
+   ...localHeads.map(h=>set({...h,state:h.off}))]);
   write(`maintenance/restore_${i}`,[...reps.map(set),sch('maintenance/advance',i===0?40:2)]);
   restore.push(`execute if score #seg ${OBJ} matches ${i} run ${fun(`maintenance/restore_${i}`)}`);
   apply.push(`execute if score #seg ${OBJ} matches ${i} run ${fun(`maintenance/apply_${i}`)}`);
@@ -116,8 +130,9 @@ export async function build({OUT,PACK,FN,info,blocks,notes,heads,resetRepeaters,
  write('launch',[
   `execute store result score #launch ${OBJ} run time query gametime`,
   `scoreboard players set #busy ${OBJ} 2`,`scoreboard players set #lastMin ${OBJ} 0`,
-  ...heads.map(h=>set({...h,state:h.on})),sch('off',6),sch('finish',info.excerpt.musicGT+120),say('LAUNCH')]);
- write('off',heads.map(h=>set({...h,state:h.off})));
+  ...bankTicks.map(t=>t===0?fun('banks/pulse_0'):sch(`banks/pulse_${t}`,t)),
+  sch('finish',info.excerpt.musicGT+120),say('LAUNCH')]);
+ write('off',(banks.get(0)??[]).map(h=>set({...h,state:h.off})));
  write('tick',[`execute if score #busy ${OBJ} matches 2 run ${fun('follow')}`]);
  const maxMin=N/16-12;
  write('follow',[

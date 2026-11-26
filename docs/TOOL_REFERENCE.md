@@ -14,6 +14,7 @@
 | `audio capabilities/transcribe/beats/separate/compare …` | 本机后端检查、可核对原始输出的转写/分轨/节拍候选、同一时间轴试听 |
 | `composition import/revise/export/review/render/study/voicelead …` | 冻结可信主题，写局部音符、声部和段落，听实际音源的独奏和混合 |
 | `plan-noteblocks SOURCE --out DIR [--profile FILE] [--consistency role\|phrase] [--adaptation-plan FILE]` | 默认整条声部统一声音；报告选槽和移调，产出 events.json / adaptation_plan.json |
+| `arrange-game MIDI --out DIR [--profile FILE] [--routing FILE] [--decisions FILE]` | 独立 Minecraft 演奏 MIDI、游戏触发谱、逐音适配差异与校准采样预听 |
 | `design-timbre RECIPE --out DIR` / `build-palette SPEC --out DIR` | 调整起音、音体、根音与包络，生成采样和可进入实体编配的声音包 |
 | `audit-palette PROFILE [--events FILE] [--out FILE]` | 测全部 25 格变速音高和尾音，定位持续和重叠疑点 |
 | `compare-timbres SOURCE --palette FILE --out DIR` / `timbre-study NEW_DIR` | 固定 MIDI 和事件决策，对照三种配方与同增益独奏 |
@@ -31,6 +32,8 @@
 
 | 命令 | 输入与产出 |
 |---|---|
+| `plan-track EVENTS --out DIR [--design FILE]` | 从游戏触发谱规划乐句、隔离的实体支路与位置；用 `inputs.trackDesign` 纳入流水线 |
+| `preview-track PLACED_BLOCKS --out DIR` | 从实际编译坐标生成各段等轴图，可对比材料、支路密度和空间轮廓 |
 | `preview-stage BLUEPRINT --out DIR [--protection FILE]` | 声明式 set/fill/frame/stairs/blocks，材料/保护冲突与四视图；几何不等于游戏物理 |
 | `compile-show SCORE --out DIR [--style FILE]` | 音符或显式 show score，节点/环/螺旋/贝塞尔与字幕，统一 musicGT |
 | `game inspect INSTANCE [--java PATH]` | 只读版本/模组/JDK 元数据，不读取账号文件 |
@@ -40,7 +43,7 @@
 
 建筑蓝图以世界绝对坐标通过 `inputs.stageModule` 合入机器。50,000 方块、2,000 操作、单轴跨度 512 限制；合入拒绝覆盖、线路邻域、音符盒头顶/基座、相机通道和主动/不稳定方块，限制总体导出体积。真实游戏仍需复核。
 
-机器配置支持：
+新建项目采用随谱轨道。恢复固定摆位时使用 `machine.trackMode: "fixed"`。两种模式都可提供声部位置与相机参数。随谱模式将全曲位置作为偏好，精确的每段位置使用 `trackDesign` 的锚点。
 
 ```json
 {"layout":{"families":[{"id":"voice","x":0,"y":-8}],"camera":{"x":37.5,"eyeY":112.5,"teleportDuration":3}}}
@@ -54,7 +57,7 @@
 
 `brief PROJECT --text TEXT` 更新需求；`decision PROJECT --summary TEXT --reason TEXT` 追加决策。`review PROJECT --file FILE` 使用 `templates/review.example.json`，保留真实反馈、审阅者、方法和输入哈希。文件改动后 `handoff PROJECT` 标记旧认可过期，不自动授予艺术通过。
 
-`create-task PROJECT --role ROLE --kind KIND --objective TEXT` 创建文件任务；claim / complete-task 和旧 review 模式兼容。角色包含 producer、music、arrangement、sound、machine、stage、visuals、quality；任务类型包含 review、music_import、arrangement、sound_profile、show_score、stage_module、engine_change。task.json 给出对应 Skill、输入、允许范围与必需输出；专业 agent 只写自己的 output。任务中的 `review` 是技术提案审阅；用户媒体反馈另用 `review` 命令，不混作同一合同。
+`create-task PROJECT --role ROLE --kind KIND --objective TEXT` 创建文件任务，接续使用 claim-task 和 complete-task。角色包含 producer、music、arrangement、sound、machine、stage、visuals、quality。任务类型还包含 `game_arrangement` 与 `track_design`，分别交接演奏谱决策与乐句轨道设计。task.json 给出对应 Skill、输入、允许范围与必需输出，专业 agent 只写自己的 output。用户媒体反馈使用独立的 `review` 命令。
 
 `handoff PROJECT` 派生 STATUS.md/handoff.json，不覆盖 brief/plan/决策。不要把 stdout 重定向到 handoff.json 本身；工具会写该文件。主 agent 或单 agent 完成相同合同，Python 不要求宿主有子 agent API。
 

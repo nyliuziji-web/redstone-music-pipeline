@@ -49,6 +49,8 @@ python run_pipeline.py handoff projects/my-song
 
 有音乐后，技术链条是`music → sound → machine → visuals → validate → release`；[PIPELINE](PIPELINE.md)说明现有构建命令和阶段。创作可以在这些阶段之间往返，原始母版冻结，修改产生新候选。
 
+有可信 MIDI 但仍需为 Minecraft 改配器时，先做[演奏谱与随谱轨道](docs/PERFORMANCE_AND_TRACK.md)。新工程会按乐句分配实体支路。想精细设计时，写出自己的段落、主读位置与造型决定，再新建游戏候选。
+
 ## 专业能力入口
 
 | 要解决的问题 | Skill |

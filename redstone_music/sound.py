@@ -70,6 +70,7 @@ def run(ctx):
     resources = ctx['config'].get('inputs', {}).get('soundPack')
     profile_path = ctx['config'].get('inputs', {}).get('soundProfile')
     adaptation_path = ctx['config'].get('inputs', {}).get('adaptationPlan')
+    arrangement_path = ctx['config'].get('inputs', {}).get('gameArrangement')
     report = {'schemaVersion': 1, 'profile': settings.get('profile', 'vanilla'), 'sourceMode': score['sourceMode'],
               'listeningVerified': False, 'soundPackProvided': bool(resources), 'transformations': [],
               'limitations': ['Vanilla note-off and per-note velocity are not implemented by the game sound engine',
@@ -79,8 +80,9 @@ def run(ctx):
         raise ValueError('sound.adapter must be role-consistent or explicit legacy-vanilla')
     if settings.get('profile', 'vanilla') != 'vanilla' and not resources:
         raise ValueError('A custom sound profile requires an explicit input soundPack')
-    if profile_path or adaptation_path or (score['sourceMode']!='approved_events' and adapter!='legacy-vanilla'):
-        from .music_tools import plan_noteblocks, validate_sound_profile, validate_soundpack
+    if profile_path or adaptation_path or arrangement_path or (score['sourceMode']!='approved_events' and adapter!='legacy-vanilla'):
+        from .game_arrangement import arrange, export_performance_midi
+        from .music_tools import validate_sound_profile, validate_soundpack
         path, profile = None, None
         if profile_path:
             path = Path(profile_path)
@@ -96,10 +98,20 @@ def run(ctx):
         if adaptation_path:
             adaptation = Path(adaptation_path)
             adaptation = adaptation if adaptation.is_absolute() else Path(ctx['project']) / adaptation
-        events = plan_noteblocks(score, profile=path, adaptation_plan=adaptation,
-                                consistency=settings.get('consistency','role'))
-        if not settings.get('retrigger',True):
-            events['candidates']=[n for n in events['candidates'] if n['kind']!='retrigger']
+        decisions = None
+        if arrangement_path:
+            arrangement = Path(arrangement_path)
+            if not arrangement.is_absolute():
+                arrangement = Path(ctx['project'])/arrangement
+            decisions = json.loads(arrangement.read_text(encoding='utf-8-sig'))
+            if not isinstance(decisions, dict):
+                raise ValueError('Game arrangement must be a JSON object')
+            shutil.copyfile(arrangement,out/'game-arrangement.json')
+        events, editorial = arrange(score, path, adaptation, decisions, settings.get('consistency','role'),
+                                    settings.get('retrigger',True))
+        export_performance_midi(events,out/'game-performance.mid')
+        _write(out/'arrangement-report.json',editorial)
+        report['authoredArrangement'] = decisions is not None
         for decision in events['phraseDecisions']:
             if decision['transpose']:
                 report['transformations'].append({'family':decision['role'],
@@ -112,7 +124,7 @@ def run(ctx):
                       sustainStrategy='explicit per-slot profile; no fixed global retrigger interval',
                       events=len(events['candidates']), onsets=sum(n['kind'] == 'onset' for n in events['candidates']),
                       retriggers=sum(n['kind'] == 'retrigger' for n in events['candidates']),
-                      sourceOnsetsMapped=len(score['notes']),
+                      sourceOnsetsMapped=len(score['notes'])-len(events.get('omitted',[])),
                       soundPackRuntimeVerified=False)
         if adaptation:
             report.update(explicitAdaptationApplied=True, adaptationPlanSha256=hashlib.sha256(adaptation.read_bytes()).hexdigest())

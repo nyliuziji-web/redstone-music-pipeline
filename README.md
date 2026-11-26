@@ -2,11 +2,11 @@
 
 供新 agent 冷启动的 Minecraft 红石音乐制作工作包：8 个专业 Skill、实操教程、可执行工具、项目合同、原创练习与证据交接。中文从 [START_HERE](START_HERE.md) 开始；设计和取舍见[改写方案](docs/REWRITE_PLAN.md)。
 
-`0.3.0a2` 开发预览整合录音转写、局部编曲、专用音色和轻声部织体。新 agent 从 [START_HERE](START_HERE.md) 开始。各模块的完成度、实测范围与短板见[实施与验证](docs/IMPLEMENTATION_STATUS.md)。
+`0.4.0a1` 开发预览加入独立 Minecraft 演奏谱、逐音改编记录与按乐句布置的实体轨道。新 agent 从 [START_HERE](START_HERE.md) 开始。各模块的完成度、实测范围与短板见[实施与验证](docs/IMPLEMENTATION_STATUS.md)。
 
 ## 安装与开始
 
-基线：Python 3.12、Node 24；专业音乐功能另需 FFmpeg。Minecraft 主线为 Java 1.21.1 / JDK 21 / Fabric；离线制作不需要游戏本体。
+基线使用 Python 3.12、Node 24，专业音乐功能另需 FFmpeg。实体演奏与可玩世界使用 Minecraft Java 1.21.1 / JDK 21。Fabric 用于可选的客户端粒子和字幕。离线制作可以在未安装游戏的环境运行。
 
 ```shell
 python -m venv .venv

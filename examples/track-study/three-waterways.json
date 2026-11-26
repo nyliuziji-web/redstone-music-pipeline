@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sections": [
+    {"beginGT":0,"endGT":103,"label":"Copper atrium","style":"copper","focus":"theme_attack","spread":1,"terrace":0,"turn":-1},
+    {"beginGT":103,"endGT":221,"label":"Tidal ribs","style":"tide","focus":"chords","spread":3,"terrace":1,"turn":1},
+    {"beginGT":221,"endGT":320,"label":"Moon arcade","style":"moon","focus":"theme_attack","spread":2,"terrace":0,"turn":-1}
+  ]
+}

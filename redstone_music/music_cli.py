@@ -118,7 +118,10 @@ def _composition_commands(sub):
 
 
 def add_music_commands(sub):
+    from .game_arrangement import create_game_arrangement
     from .texture_study import create_texture_study
+    from .track_design import create_track_plan
+    from .track_preview import preview_track
 
     _audio_commands(sub)
     _composition_commands(sub)
@@ -126,3 +129,13 @@ def add_music_commands(sub):
     p = sub.add_parser('texture-study', help='Generate original baseline and quiet texture projects')
     p.add_argument('out')
     p.set_defaults(_music_action=lambda a: create_texture_study(a.out))
+    p = sub.add_parser('arrange-game', help='Make a traceable Minecraft performance MIDI from an intact master')
+    p.add_argument('source'); p.add_argument('--out',required=True); p.add_argument('--profile')
+    p.add_argument('--routing'); p.add_argument('--decisions')
+    p.set_defaults(_music_action=lambda a: create_game_arrangement(a.source,a.out,a.profile,a.routing,a.decisions))
+    p = sub.add_parser('plan-track', help='Lay out physical phrase banks from the game event score')
+    p.add_argument('events'); p.add_argument('--out',required=True); p.add_argument('--design')
+    p.set_defaults(_music_action=lambda a: create_track_plan(a.events,a.out,a.design))
+    p = sub.add_parser('preview-track', help='Inspect the compiled track geometry in phrase views')
+    p.add_argument('placed_blocks'); p.add_argument('--out',required=True)
+    p.set_defaults(_music_action=lambda a: preview_track(a.placed_blocks,a.out))

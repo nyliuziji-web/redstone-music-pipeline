@@ -1,3 +1,3 @@
 """Versioned, resumable Minecraft note-block production pipeline."""
 
-__version__ = "0.3.0a2"
+__version__ = "0.4.0a1"

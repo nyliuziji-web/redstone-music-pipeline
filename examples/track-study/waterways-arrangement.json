@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceMidiSha256": "d392e704ee9034c463d8467300a49b675f835aaff8a7f4bac516b8320383eb10",
+  "edits": [
+    {"noteId":"t4n3","omit":true,"reason":"Leave space for the phrase echo"},
+    {"noteId":"t3n7","shiftGT":1,"reason":"Separate the inner voice attack"}
+  ]
+}

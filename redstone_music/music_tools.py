@@ -622,6 +622,7 @@ def plan_noteblocks(source, out=None, profile=None, adaptation_plan=None, consis
     result = {'schemaVersion': 1, 'sourceMidiSha256': score.get('sourceMidiSha256'), 'durationSeconds': score['durationSeconds'],
               'sourceOffsetGT': score.get('sourceOffsetGT',0), 'musicGT': math.ceil(score['durationSeconds'] * 20), 'candidates': candidates, 'merged': [],
               'profileId': value['id'], 'phraseDecisions': decisions, 'listeningVerified': False,
+              'sections': score.get('sections',[]),
               'consistency':consistency,
               'limitations': ['MIDI note-off and velocity do not directly control vanilla sample playback',
                               'Phrase consistency and measurements do not establish artistic quality']}
