@@ -1,10 +1,10 @@
 # Redstone Music Pipeline
 
-中文入口：这是一套可执行、可恢复的生产系统。有 MIDI 时自动生成候选世界、投影、控制包、视觉数据和交付 ZIP；缺少音乐或遇到问题时，生成主／专业 agent 可接手的任务。Windows 当前工程可双击 `start_demo.cmd` 体验原创短曲流水线。新 agent 先读 [主控指南](agents/START.md)。
+新 agent 从 [START_HERE](START_HERE.md) 与专业 Skill 入手。本文保留底层构建/任务合同说明；新增音乐、声音、建筑、证据工具见 [CLI 工具参考](docs/TOOL_REFERENCE.md)。
 
 实际已跑的测试与边界见 [v0.1 验证记录](PIPELINE_VERIFICATION.md)。
 
-下一版的产品目标、Skill、工具集成、环境与冷启动验收见[正式改写方案](docs/REWRITE_PLAN.md)，经验依据见[Nevada正式复盘](docs/NEVADA_RETROSPECTIVE.md)。方案中的新增能力尚待实施。
+产品目标和取舍见[正式改写方案](docs/REWRITE_PLAN.md)，经验依据见[Nevada正式复盘](docs/NEVADA_RETROSPECTIVE.md)。当前实施与验证范围见[实施记录](docs/IMPLEMENTATION_STATUS.md)。
 
 最快试跑：`python run_pipeline.py demo`。重复运行会复用未改变且完整的产物，不覆盖旧版本。系统不会把技术检查当作已经听审、录制或投稿。
 
@@ -14,7 +14,7 @@ The conductor runs deterministic tools and hands creative or repair work to spec
 
 ## Quick start
 
-Requires Python 3.11+, Node.js 20+ and the Python dependencies below. Minecraft files are unnecessary for generating and checking a candidate world; real game replay requires a separate, locally supplied Java 1.21.1 environment.
+Requires Python 3.12+, Node.js 24+ and the Python dependencies below. Professional tools use `.[production]`, optional melody transcription uses `.[pitch]`. Minecraft files are unnecessary for generating and checking a candidate world; real game replay requires a separate, locally supplied Java 1.21.1 environment.
 
 ```shell
 python -m pip install -e .
@@ -56,7 +56,7 @@ The main agent owns the goal, configuration, schedule and acceptance decisions. 
 With no music input, the conductor creates a music-production task instead of inventing a complete song or marking the stage complete:
 
 ```shell
-python -m redstone_music init projects/new-song --title "New song"
+python -m redstone_music init projects/new-song --title "New song" --reference-audio path/to/reference.mp3
 python -m redstone_music run projects/new-song
 python -m redstone_music tasks projects/new-song
 ```

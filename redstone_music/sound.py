@@ -26,6 +26,17 @@ DRUMS = {'kick': ('basedrum', 'minecraft:stone', 0), 'snare': ('snare', 'minecra
          'hats': ('hat', 'minecraft:glass', 0), 'fx': ('basedrum', 'minecraft:stone', 12)}
 
 
+def fingerprint_inputs(ctx):
+    """Nested profile samples are real inputs, not just an optional JSON label."""
+    value = ctx['config'].get('inputs', {}).get('soundProfile')
+    if not value:
+        return []
+    from .music_tools import sound_profile_dependencies
+    path = Path(value)
+    path = path if path.is_absolute() else Path(ctx['project']) / path
+    return sound_profile_dependencies(path)
+
+
 def _write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
@@ -57,12 +68,90 @@ def run(ctx):
     score = json.loads((music / 'score.json').read_text(encoding='utf-8'))
     settings = ctx['config'].get('sound', {})
     resources = ctx['config'].get('inputs', {}).get('soundPack')
+    profile_path = ctx['config'].get('inputs', {}).get('soundProfile')
+    adaptation_path = ctx['config'].get('inputs', {}).get('adaptationPlan')
+    arrangement_path = ctx['config'].get('inputs', {}).get('gameArrangement')
     report = {'schemaVersion': 1, 'profile': settings.get('profile', 'vanilla'), 'sourceMode': score['sourceMode'],
               'listeningVerified': False, 'soundPackProvided': bool(resources), 'transformations': [],
               'limitations': ['Vanilla note-off and per-note velocity are not implemented by the game sound engine',
                               'Generated arrangement and mix require listening; structural success is not artistic approval']}
+    adapter=settings.get('adapter','role-consistent')
+    if adapter not in ('role-consistent','legacy-vanilla'):
+        raise ValueError('sound.adapter must be role-consistent or explicit legacy-vanilla')
     if settings.get('profile', 'vanilla') != 'vanilla' and not resources:
         raise ValueError('A custom sound profile requires an explicit input soundPack')
+    if profile_path or adaptation_path or arrangement_path or (score['sourceMode']!='approved_events' and adapter!='legacy-vanilla'):
+        from .game_arrangement import arrange, export_performance_midi
+        from .music_tools import validate_sound_profile, validate_soundpack
+        path, profile = None, None
+        if profile_path:
+            path = Path(profile_path)
+            path = path if path.is_absolute() else Path(ctx['project']) / path
+            profile = validate_sound_profile(path)
+        if score['sourceMode'] == 'approved_events':
+            raise ValueError('An exact approved-event baseline cannot be silently remapped by a sound profile; import the MIDI for explicit re-adaptation')
+        if profile_path and not resources:
+            raise ValueError('A calibrated sound profile requires its explicit soundPack')
+        if resources and not profile_path:
+            raise ValueError('An explicit adaptation with custom soundPack needs its calibrated soundProfile')
+        adaptation = None
+        if adaptation_path:
+            adaptation = Path(adaptation_path)
+            adaptation = adaptation if adaptation.is_absolute() else Path(ctx['project']) / adaptation
+        decisions = None
+        if arrangement_path:
+            arrangement = Path(arrangement_path)
+            if not arrangement.is_absolute():
+                arrangement = Path(ctx['project'])/arrangement
+            decisions = json.loads(arrangement.read_text(encoding='utf-8-sig'))
+            if not isinstance(decisions, dict):
+                raise ValueError('Game arrangement must be a JSON object')
+            shutil.copyfile(arrangement,out/'game-arrangement.json')
+        events, editorial = arrange(score, path, adaptation, decisions, settings.get('consistency','role'),
+                                    settings.get('retrigger',True))
+        export_performance_midi(events,out/'game-performance.mid')
+        _write(out/'arrangement-report.json',editorial)
+        report['authoredArrangement'] = decisions is not None
+        for decision in events['phraseDecisions']:
+            if decision['transpose']:
+                report['transformations'].append({'family':decision['role'],
+                    'type':'whole-role-octave-transpose' if events.get('consistency')=='role' else 'whole-phrase-octave-transpose',
+                    'semitones':decision['transpose'],'noteIds':decision['noteIds']})
+        if not profile_path:
+            report['limitations'].append('Vanilla sample envelopes are unmeasured here; no fixed 5/6 GT retrigger is invented. Long notes need a calibrated sound profile and listening.')
+        report.update(profile=events['profileId'], phraseDecisions=events['phraseDecisions'],
+                      adapter=adapter, consistency=events.get('consistency'),
+                      sustainStrategy='explicit per-slot profile; no fixed global retrigger interval',
+                      events=len(events['candidates']), onsets=sum(n['kind'] == 'onset' for n in events['candidates']),
+                      retriggers=sum(n['kind'] == 'retrigger' for n in events['candidates']),
+                      sourceOnsetsMapped=len(score['notes'])-len(events.get('omitted',[])),
+                      soundPackRuntimeVerified=False)
+        if adaptation:
+            report.update(explicitAdaptationApplied=True, adaptationPlanSha256=hashlib.sha256(adaptation.read_bytes()).hexdigest())
+            shutil.copyfile(adaptation, out / 'adaptation_plan.json')
+        else:
+            _write(out/'adaptation_plan.json',{'schemaVersion':1,'profileId':events['profileId'],
+                'sourceMidiSha256':events.get('sourceMidiSha256'),'decisions':events['phraseDecisions'],
+                'listeningVerified':False})
+        if profile_path:
+            pack = Path(resources)
+            pack = pack if pack.is_absolute() else Path(ctx['project']) / pack
+            report['soundPackValidation'] = validate_soundpack(pack, path)
+            report['profileSha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            report['soundPackSha256'] = hashlib.sha256(pack.read_bytes()).hexdigest()
+            shutil.copyfile(pack, out / 'resources.zip')
+            # Keep the artifact profile self-contained for later candidate audition.
+            (out / 'samples').mkdir()
+            for key, slot in profile['slots'].items():
+                sample = Path(slot['sample'])
+                sample = sample if sample.is_absolute() else path.parent / sample
+                shutil.copyfile(sample, out / 'samples' / (key + '.ogg'))
+                slot['sample'] = 'samples/' + key + '.ogg'
+            _write(out / 'sound_profile.json', profile)
+        _write(out / 'events.json', events)
+        _write(out / 'sound_report.json', report)
+        return {'events': report['events'], 'onsets': report['onsets'], 'retriggers': report['retriggers'],
+                'profileId': events['profileId'], 'listeningVerified': False}
     if score['sourceMode'] == 'approved_events':
         baseline = json.loads((music / 'approved_events.json').read_text(encoding='utf-8-sig'))
         candidates = baseline['notes']

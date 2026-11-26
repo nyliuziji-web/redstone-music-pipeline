@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "title": "Six-block alley with a stone curb",
+  "operations": [
+    {"op":"fill", "min":[-19,104,86], "max":[-19,104,114], "block":"minecraft:tuff_bricks"},
+    {"op":"fill", "min":[-18,104,86], "max":[-15,104,114], "block":"minecraft:polished_andesite"},
+    {"op":"fill", "min":[-14,104,86], "max":[-14,104,114], "block":"minecraft:tuff_bricks"}
+  ]
+}

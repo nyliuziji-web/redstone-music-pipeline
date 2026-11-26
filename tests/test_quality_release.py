@@ -207,6 +207,8 @@ class QualityReleaseTests(unittest.TestCase):
                 if 'tellraw @a ' in line:
                     json.loads(line.split('tellraw @a ', 1)[1])
         with zipfile.ZipFile(song / "release/deliverables.zip") as archive:
+            names = {Path(member).name for member in archive.namelist()}
+            self.assertTrue({'game-performance.mid', 'arrangement-report.json'} <= names)
             for member in archive.namelist():
                 if member.endswith((".json", ".md", ".mcfunction", ".mcmeta")):
                     text = archive.read(member).decode("utf-8")

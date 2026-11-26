@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "1.21.1",
+  "title": "Original hutong frontage study",
+  "baseStage": "road.json",
+  "modules": {
+    "narrow": "modules/narrow/run-001/narrow.nbt",
+    "wide": "modules/wide/run-001/wide.nbt",
+    "courtyard": "modules/courtyard/run-001/courtyard.nbt"
+  },
+  "placements": [
+    {"module":"narrow", "origin":[-20,104,90], "quarterTurns":1},
+    {"module":"courtyard", "origin":[-20,104,100], "quarterTurns":1},
+    {"module":"wide", "origin":[-13,104,108], "quarterTurns":3}
+  ]
+}

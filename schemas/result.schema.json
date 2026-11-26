@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Specialist result",
+  "type": "object",
+  "required": [
+    "outputs"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "outputs": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "configPatch": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

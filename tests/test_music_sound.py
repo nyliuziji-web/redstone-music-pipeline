@@ -89,6 +89,21 @@ class AdaptationTests(unittest.TestCase):
         return {'project': str(project), 'root': str(Path(__file__).resolve().parents[1]),
                 'config': config, 'deps': deps or {}, 'out': str(out)}
 
+    def test_default_sound_rejects_timbre_switches_and_uses_measured_slot_only(self):
+        from redstone_music.music_tools import plan_noteblocks
+        source = midi_bytes([[
+            (0,b'\xff\x03\x05Theme'), (0,b'\x90\x3d\x55'), (960,b'\x80\x3d\x00'),
+            (960,b'\x90\x52\x55'), (960,b'\x80\x52\x00'),
+        ]])
+        score = parse_midi(source)
+        with self.assertRaisesRegex(ValueError, 'MIDI 61..82.*rootMidi=72'):
+            plan_noteblocks(score)
+        profile = {'schemaVersion':1,'id':'study','roles':{'theme_attack':'lead'},
+                   'slots':{'lead':{'instrument':'harp','baseBlock':'minecraft:dirt','rootMidi':72}}}
+        events = plan_noteblocks(score, profile=profile)['candidates']
+        self.assertEqual([(n['slot'],n['note'],n['transpose'],n['kind']) for n in events],
+                         [('lead',1,0,'onset'),('lead',22,0,'onset')])
+
     def test_independent_phrase_master_unchanged_and_sources_accounted(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td)
@@ -106,11 +121,11 @@ class AdaptationTests(unittest.TestCase):
             self.assertEqual(source.read_bytes(), original)
             self.assertFalse(result['listeningVerified'])
 
-    def test_voice_long_note_produces_tagged_retriggers(self):
+    def test_explicit_legacy_voice_long_note_produces_tagged_retriggers(self):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td)
             (p / 'voice.mid').write_bytes(midi_bytes([[(0, b'\xc0\x35'), (0, b'\x90\x3c\x64'), (1920, b'\x80\x3c\x00')]]))
-            config = {'inputs': {'midi': 'voice.mid'}, 'sound': {'retrigger': True}}
+            config = {'inputs': {'midi': 'voice.mid'}, 'sound': {'retrigger': True,'adapter':'legacy-vanilla'}}
             music.run(self.context(p, p / 'music', config))
             sound.run(self.context(p, p / 'sound', config, {'music': str(p / 'music')}))
             events = json.loads((p / 'sound/events.json').read_text(encoding='utf-8'))['candidates']

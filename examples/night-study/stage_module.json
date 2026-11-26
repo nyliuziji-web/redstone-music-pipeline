@@ -1,0 +1,768 @@
+{
+  "schemaVersion": 1,
+  "title": "Moon-window phrase markers v2: bounded three-section candidate",
+  "design": {
+    "mainRead": "Open frames at phrase boundaries; central machine remains readable",
+    "palette": "dark deepslate, cold sea lantern, blue glass",
+    "cameraRelation": "outside both sides of the machine; no spanning roof",
+    "deploymentZ": [
+      100,
+      367,
+      600
+    ],
+    "limitation": "CPU simple-color preview; final night lighting and client sightlines pending",
+    "revision": "Three modules span 505 inclusive cells, within the voxel 512-axis limit; final close uses the show arc."
+  },
+  "operations": [
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        100,
+        98
+      ],
+      "max": [
+        -4,
+        100,
+        102
+      ],
+      "block": "minecraft:deepslate_tiles"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        101,
+        100
+      ],
+      "max": [
+        -10,
+        115,
+        100
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -4,
+        101,
+        100
+      ],
+      "max": [
+        -4,
+        115,
+        100
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        115,
+        100
+      ],
+      "max": [
+        -4,
+        115,
+        100
+      ],
+      "block": "minecraft:polished_deepslate_slab[type=bottom]"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -9,
+        101,
+        100
+      ],
+      "max": [
+        -5,
+        101,
+        100
+      ],
+      "block": "minecraft:tinted_glass"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -8,
+        102,
+        100
+      ],
+      "max": [
+        -6,
+        102,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -8,
+        103,
+        100
+      ],
+      "max": [
+        -6,
+        103,
+        100
+      ],
+      "block": "minecraft:blue_stained_glass"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -8,
+        113,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -7,
+        112,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -6,
+        111,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        100,
+        98
+      ],
+      "max": [
+        90,
+        100,
+        102
+      ],
+      "block": "minecraft:deepslate_tiles"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        101,
+        100
+      ],
+      "max": [
+        84,
+        115,
+        100
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        90,
+        101,
+        100
+      ],
+      "max": [
+        90,
+        115,
+        100
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        115,
+        100
+      ],
+      "max": [
+        90,
+        115,
+        100
+      ],
+      "block": "minecraft:polished_deepslate_slab[type=bottom]"
+    },
+    {
+      "op": "fill",
+      "min": [
+        85,
+        101,
+        100
+      ],
+      "max": [
+        89,
+        101,
+        100
+      ],
+      "block": "minecraft:tinted_glass"
+    },
+    {
+      "op": "fill",
+      "min": [
+        86,
+        102,
+        100
+      ],
+      "max": [
+        88,
+        102,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        86,
+        103,
+        100
+      ],
+      "max": [
+        88,
+        103,
+        100
+      ],
+      "block": "minecraft:blue_stained_glass"
+    },
+    {
+      "op": "set",
+      "pos": [
+        86,
+        113,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        87,
+        112,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        88,
+        111,
+        100
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        100,
+        365
+      ],
+      "max": [
+        -4,
+        100,
+        369
+      ],
+      "block": "minecraft:deepslate_tiles"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        101,
+        367
+      ],
+      "max": [
+        -10,
+        117,
+        367
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -4,
+        101,
+        367
+      ],
+      "max": [
+        -4,
+        117,
+        367
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        117,
+        367
+      ],
+      "max": [
+        -4,
+        117,
+        367
+      ],
+      "block": "minecraft:polished_deepslate_slab[type=bottom]"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -9,
+        101,
+        367
+      ],
+      "max": [
+        -5,
+        101,
+        367
+      ],
+      "block": "minecraft:tinted_glass"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -8,
+        102,
+        367
+      ],
+      "max": [
+        -6,
+        102,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -8,
+        103,
+        367
+      ],
+      "max": [
+        -6,
+        103,
+        367
+      ],
+      "block": "minecraft:blue_stained_glass"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -8,
+        115,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -7,
+        114,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -6,
+        113,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        100,
+        365
+      ],
+      "max": [
+        90,
+        100,
+        369
+      ],
+      "block": "minecraft:deepslate_tiles"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        101,
+        367
+      ],
+      "max": [
+        84,
+        117,
+        367
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        90,
+        101,
+        367
+      ],
+      "max": [
+        90,
+        117,
+        367
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        117,
+        367
+      ],
+      "max": [
+        90,
+        117,
+        367
+      ],
+      "block": "minecraft:polished_deepslate_slab[type=bottom]"
+    },
+    {
+      "op": "fill",
+      "min": [
+        85,
+        101,
+        367
+      ],
+      "max": [
+        89,
+        101,
+        367
+      ],
+      "block": "minecraft:tinted_glass"
+    },
+    {
+      "op": "fill",
+      "min": [
+        86,
+        102,
+        367
+      ],
+      "max": [
+        88,
+        102,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        86,
+        103,
+        367
+      ],
+      "max": [
+        88,
+        103,
+        367
+      ],
+      "block": "minecraft:blue_stained_glass"
+    },
+    {
+      "op": "set",
+      "pos": [
+        86,
+        115,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        87,
+        114,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        88,
+        113,
+        367
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        100,
+        598
+      ],
+      "max": [
+        -4,
+        100,
+        602
+      ],
+      "block": "minecraft:deepslate_tiles"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        101,
+        600
+      ],
+      "max": [
+        -10,
+        115,
+        600
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -4,
+        101,
+        600
+      ],
+      "max": [
+        -4,
+        115,
+        600
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -10,
+        115,
+        600
+      ],
+      "max": [
+        -4,
+        115,
+        600
+      ],
+      "block": "minecraft:polished_deepslate_slab[type=bottom]"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -9,
+        101,
+        600
+      ],
+      "max": [
+        -5,
+        101,
+        600
+      ],
+      "block": "minecraft:tinted_glass"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -8,
+        102,
+        600
+      ],
+      "max": [
+        -6,
+        102,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        -8,
+        103,
+        600
+      ],
+      "max": [
+        -6,
+        103,
+        600
+      ],
+      "block": "minecraft:blue_stained_glass"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -8,
+        113,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -7,
+        112,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        -6,
+        111,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        100,
+        598
+      ],
+      "max": [
+        90,
+        100,
+        602
+      ],
+      "block": "minecraft:deepslate_tiles"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        101,
+        600
+      ],
+      "max": [
+        84,
+        115,
+        600
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        90,
+        101,
+        600
+      ],
+      "max": [
+        90,
+        115,
+        600
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "min": [
+        84,
+        115,
+        600
+      ],
+      "max": [
+        90,
+        115,
+        600
+      ],
+      "block": "minecraft:polished_deepslate_slab[type=bottom]"
+    },
+    {
+      "op": "fill",
+      "min": [
+        85,
+        101,
+        600
+      ],
+      "max": [
+        89,
+        101,
+        600
+      ],
+      "block": "minecraft:tinted_glass"
+    },
+    {
+      "op": "fill",
+      "min": [
+        86,
+        102,
+        600
+      ],
+      "max": [
+        88,
+        102,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "fill",
+      "min": [
+        86,
+        103,
+        600
+      ],
+      "max": [
+        88,
+        103,
+        600
+      ],
+      "block": "minecraft:blue_stained_glass"
+    },
+    {
+      "op": "set",
+      "pos": [
+        86,
+        113,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        87,
+        112,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    },
+    {
+      "op": "set",
+      "pos": [
+        88,
+        111,
+        600
+      ],
+      "block": "minecraft:sea_lantern"
+    }
+  ]
+}

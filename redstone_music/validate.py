@@ -198,7 +198,16 @@ def run(ctx):
     require(all(note.get("parentId", note["id"]) in source_ids | source_parents for note in candidates), "Adapted parents refer to source score")
     represented = {note.get("parentId", note["id"]) for note in candidates}
     represented.update(item["id"] for item in adapted.get("merged", []) if "id" in item)
-    require(source_parents <= represented, "Every source parent is represented or explicitly merged")
+    omitted = adapted.get("omitted", [])
+    if omitted:
+        reasons = {row.get("id"):row.get("reason") for row in omitted}
+        authored = sound/"game-arrangement.json"
+        allow = ({row["noteId"]:row["reason"] for row in read(authored).get("edits",[])
+                  if row.get("omit") is True} if authored.is_file() else {})
+        require(len(omitted)==len(reasons) and reasons==allow and reasons.keys()<=source_ids
+                and not (reasons.keys() & represented), "Omissions match unique source IDs and authored reasons")
+        represented.update(reasons)
+    require(source_parents <= represented, "Every source parent is represented, merged or explicitly omitted")
     block_positions = [position(block) for block in placed["blocks"]]
     require(len(block_positions) == len(set(block_positions)), "Placed blocks have no coordinate collisions")
     grid = {position(block): block for block in placed["blocks"]}
@@ -237,6 +246,19 @@ def run(ctx):
     require((machine / "helper/pack.mcmeta").is_file(), "Playback control data pack generated")
     require(any((machine / "world/region").glob("*.mca")), "World contains generated region data")
     manifest = read(machine / "build_manifest.json")
+    track_path = machine/'track-plan.json'
+    if track_path.is_file():
+        track = read(track_path)
+        require(track == manifest.get('trackPlan') and track.get('musicGT')==adapted.get('musicGT'),
+                'Phrase design matches the exported build and event clock')
+        sections = track.get('sections',[])
+        phrase_ids = {row['beginGT']:row for row in sections}
+        require(all(note.get('clockLane',{}).get('launchGT') in phrase_ids
+                    and phrase_ids[note['clockLane']['launchGT']]['beginGT']<=note['q']<
+                        phrase_ids[note['clockLane']['launchGT']]['endGT']
+                    and note['clockLane']['parity']==(note['q']-note['clockLane']['launchGT'])%2
+                    and note['z']==80+note['q'] for note in notes),
+                'Each physical strike uses its own phrase clock and preserves the global performance tick')
     namespace = manifest.get("namespace")
     require(isinstance(namespace, str) and bool(re.fullmatch(r"[a-z0-9_.-]+", namespace)), "Valid data-pack namespace")
     metadata = read(machine / "helper/pack.mcmeta")
@@ -292,7 +314,7 @@ def run(ctx):
     if not runtime["clientVerified"]:
         warnings.append("Client rendering, interpolation and cleanup remain unverified")
     delivery_bindings = []
-    for stage, folders, filenames in (("machine", ("world", "helper"), ("performance.litematic",)), ("sound", (), ("resources.zip",)), ("visuals", (), ("client.jar", "show_assets.json", "captions.json"))):
+    for stage, folders, filenames in (("machine", ("world", "helper"), ("performance.litematic","track-plan.json")), ("sound", (), ("resources.zip","game-performance.mid","arrangement-report.json")), ("visuals", (), ("client.jar", "show_assets.json", "captions.json", "show_score.json"))):
         if stage not in dependencies:
             continue
         base = dependencies[stage]

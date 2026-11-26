@@ -1,0 +1,11 @@
+{
+  "project": "harrynull/mcbuild",
+  "source": "https://github.com/harrynull/mcbuild",
+  "commit": "34ce86372d4c23f4d83d4e24fc256cb399d6c3e3",
+  "path": "src/mcbuild/voxel.py",
+  "sha256": "eeaf8b42591e804062cce41e66901941094391261b48989b4361f8a8fe0bfbd2",
+  "license": "MIT",
+  "copyright": "Copyright (c) 2026 Harry",
+  "changes": "Unmodified voxel module. The local declarative blueprint, protection checks and simple-color preview renderer are this project's own code.",
+  "excluded": ["Minecraft textures and blockstates", "hosted LLM controller", "NeoForge mod", "network server"]
+}

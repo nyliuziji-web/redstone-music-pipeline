@@ -1,0 +1,1638 @@
+{
+  "schemaVersion": 1,
+  "clock": "musicGT",
+  "namespace": "rm_cold-start-night",
+  "sampleKey": 5,
+  "lengthGT": 800,
+  "effects": [
+    {
+      "sourceId": "t1n0",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        80.5
+      ],
+      "id": "light_t1n0",
+      "kind": "node",
+      "beginGT": 0,
+      "endGT": 14,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n0",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        80.5
+      ],
+      "id": "sustain_t1n0",
+      "kind": "bezier",
+      "beginGT": 0,
+      "endGT": 25,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          26.5,
+          115.2,
+          80.5
+        ],
+        [
+          25.8,
+          116.10000000000001,
+          83.5
+        ],
+        [
+          27.2,
+          117.0,
+          87.5
+        ],
+        [
+          26.5,
+          115.60000000000001,
+          91.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n1",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        113.5
+      ],
+      "id": "light_t1n1",
+      "kind": "node",
+      "beginGT": 33,
+      "endGT": 47,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n2",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        130.5
+      ],
+      "id": "light_t1n2",
+      "kind": "node",
+      "beginGT": 50,
+      "endGT": 64,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n3",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        155.5
+      ],
+      "id": "light_t1n3",
+      "kind": "node",
+      "beginGT": 75,
+      "endGT": 89,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n3",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        155.5
+      ],
+      "id": "sustain_t1n3",
+      "kind": "bezier",
+      "beginGT": 75,
+      "endGT": 98,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          155.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          158.5
+        ],
+        [
+          31.2,
+          117.0,
+          162.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          166.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n4",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        197.5
+      ],
+      "id": "light_t1n4",
+      "kind": "node",
+      "beginGT": 117,
+      "endGT": 131,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n5",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        213.5
+      ],
+      "id": "light_t1n5",
+      "kind": "node",
+      "beginGT": 133,
+      "endGT": 147,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n5",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        213.5
+      ],
+      "id": "sustain_t1n5",
+      "kind": "bezier",
+      "beginGT": 133,
+      "endGT": 157,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          213.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          216.5
+        ],
+        [
+          31.2,
+          117.0,
+          220.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          224.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n6",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        247.5
+      ],
+      "id": "light_t1n6",
+      "kind": "node",
+      "beginGT": 167,
+      "endGT": 181,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n6",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        247.5
+      ],
+      "id": "sustain_t1n6",
+      "kind": "bezier",
+      "beginGT": 167,
+      "endGT": 187,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          247.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          250.5
+        ],
+        [
+          31.2,
+          117.0,
+          254.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          258.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n7",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        280.5
+      ],
+      "id": "light_t1n7",
+      "kind": "node",
+      "beginGT": 200,
+      "endGT": 214,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n7",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        280.5
+      ],
+      "id": "sustain_t1n7",
+      "kind": "bezier",
+      "beginGT": 200,
+      "endGT": 222,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          26.5,
+          115.2,
+          280.5
+        ],
+        [
+          25.8,
+          116.10000000000001,
+          283.5
+        ],
+        [
+          27.2,
+          117.0,
+          287.5
+        ],
+        [
+          26.5,
+          115.60000000000001,
+          291.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n8",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        322.5
+      ],
+      "id": "light_t1n8",
+      "kind": "node",
+      "beginGT": 242,
+      "endGT": 256,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n9",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        347.5
+      ],
+      "id": "light_t1n9",
+      "kind": "node",
+      "beginGT": 267,
+      "endGT": 281,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n9",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        347.5
+      ],
+      "id": "sustain_t1n9",
+      "kind": "bezier",
+      "beginGT": 267,
+      "endGT": 288,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          347.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          350.5
+        ],
+        [
+          31.2,
+          117.0,
+          354.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          358.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n10",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        380.5
+      ],
+      "id": "light_t1n10",
+      "kind": "node",
+      "beginGT": 300,
+      "endGT": 314,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n11",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        397.5
+      ],
+      "id": "light_t1n11",
+      "kind": "node",
+      "beginGT": 317,
+      "endGT": 331,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n12",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        422.5
+      ],
+      "id": "light_t1n12",
+      "kind": "node",
+      "beginGT": 342,
+      "endGT": 356,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n12",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        422.5
+      ],
+      "id": "sustain_t1n12",
+      "kind": "bezier",
+      "beginGT": 342,
+      "endGT": 365,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          26.5,
+          115.2,
+          422.5
+        ],
+        [
+          25.8,
+          116.10000000000001,
+          425.5
+        ],
+        [
+          27.2,
+          117.0,
+          429.5
+        ],
+        [
+          26.5,
+          115.60000000000001,
+          433.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n13",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        463.5
+      ],
+      "id": "light_t1n13",
+      "kind": "node",
+      "beginGT": 383,
+      "endGT": 397,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n14",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        480.5
+      ],
+      "id": "light_t1n14",
+      "kind": "node",
+      "beginGT": 400,
+      "endGT": 414,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n14",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        480.5
+      ],
+      "id": "sustain_t1n14",
+      "kind": "bezier",
+      "beginGT": 400,
+      "endGT": 422,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          26.5,
+          115.2,
+          480.5
+        ],
+        [
+          25.8,
+          116.10000000000001,
+          483.5
+        ],
+        [
+          27.2,
+          117.0,
+          487.5
+        ],
+        [
+          26.5,
+          115.60000000000001,
+          491.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n15",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        513.5
+      ],
+      "id": "light_t1n15",
+      "kind": "node",
+      "beginGT": 433,
+      "endGT": 447,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n16",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        530.5
+      ],
+      "id": "light_t1n16",
+      "kind": "node",
+      "beginGT": 450,
+      "endGT": 464,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n17",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        555.5
+      ],
+      "id": "light_t1n17",
+      "kind": "node",
+      "beginGT": 475,
+      "endGT": 489,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n17",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        555.5
+      ],
+      "id": "sustain_t1n17",
+      "kind": "bezier",
+      "beginGT": 475,
+      "endGT": 497,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          555.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          558.5
+        ],
+        [
+          31.2,
+          117.0,
+          562.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          566.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n18",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        588.5
+      ],
+      "id": "light_t1n18",
+      "kind": "node",
+      "beginGT": 508,
+      "endGT": 522,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n19",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        613.5
+      ],
+      "id": "light_t1n19",
+      "kind": "node",
+      "beginGT": 533,
+      "endGT": 547,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n19",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        613.5
+      ],
+      "id": "sustain_t1n19",
+      "kind": "bezier",
+      "beginGT": 533,
+      "endGT": 558,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          613.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          616.5
+        ],
+        [
+          31.2,
+          117.0,
+          620.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          624.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n20",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        647.5
+      ],
+      "id": "light_t1n20",
+      "kind": "node",
+      "beginGT": 567,
+      "endGT": 581,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n21",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        680.5
+      ],
+      "id": "light_t1n21",
+      "kind": "node",
+      "beginGT": 600,
+      "endGT": 614,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n21",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        680.5
+      ],
+      "id": "sustain_t1n21",
+      "kind": "bezier",
+      "beginGT": 600,
+      "endGT": 625,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          26.5,
+          115.2,
+          680.5
+        ],
+        [
+          25.8,
+          116.10000000000001,
+          683.5
+        ],
+        [
+          27.2,
+          117.0,
+          687.5
+        ],
+        [
+          26.5,
+          115.60000000000001,
+          691.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n22",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        713.5
+      ],
+      "id": "light_t1n22",
+      "kind": "node",
+      "beginGT": 633,
+      "endGT": 647,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n22",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        713.5
+      ],
+      "id": "sustain_t1n22",
+      "kind": "bezier",
+      "beginGT": 633,
+      "endGT": 655,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          713.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          716.5
+        ],
+        [
+          31.2,
+          117.0,
+          720.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          724.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n23",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        755.5
+      ],
+      "id": "light_t1n23",
+      "kind": "node",
+      "beginGT": 675,
+      "endGT": 689,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n23",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        755.5
+      ],
+      "id": "sustain_t1n23",
+      "kind": "bezier",
+      "beginGT": 675,
+      "endGT": 695,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          755.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          758.5
+        ],
+        [
+          31.2,
+          117.0,
+          762.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          766.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t1n24",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        26.5,
+        115.2,
+        788.5
+      ],
+      "id": "light_t1n24",
+      "kind": "node",
+      "beginGT": 708,
+      "endGT": 722,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n25",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        813.5
+      ],
+      "id": "light_t1n25",
+      "kind": "node",
+      "beginGT": 733,
+      "endGT": 747,
+      "radius": 0.55,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t1n25",
+      "family": "theme_attack",
+      "color": "C5E8FF",
+      "position": [
+        30.5,
+        115.2,
+        813.5
+      ],
+      "id": "sustain_t1n25",
+      "kind": "bezier",
+      "beginGT": 733,
+      "endGT": 783,
+      "radius": 0.2,
+      "points": 16,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          30.5,
+          115.2,
+          813.5
+        ],
+        [
+          29.8,
+          116.10000000000001,
+          816.5
+        ],
+        [
+          31.2,
+          117.0,
+          820.5
+        ],
+        [
+          30.5,
+          115.60000000000001,
+          824.5
+        ]
+      ]
+    },
+    {
+      "sourceId": "t2n0",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        44.5,
+        103.2,
+        80.5
+      ],
+      "id": "light_t2n0",
+      "kind": "ring",
+      "beginGT": 0,
+      "endGT": 8,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n1",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        147.5
+      ],
+      "id": "light_t2n1",
+      "kind": "ring",
+      "beginGT": 67,
+      "endGT": 75,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n2",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        213.5
+      ],
+      "id": "light_t2n2",
+      "kind": "ring",
+      "beginGT": 133,
+      "endGT": 141,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n3",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        44.5,
+        103.2,
+        280.5
+      ],
+      "id": "light_t2n3",
+      "kind": "ring",
+      "beginGT": 200,
+      "endGT": 208,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n4",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        347.5
+      ],
+      "id": "light_t2n4",
+      "kind": "ring",
+      "beginGT": 267,
+      "endGT": 275,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n5",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        413.5
+      ],
+      "id": "light_t2n5",
+      "kind": "ring",
+      "beginGT": 333,
+      "endGT": 341,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n6",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        44.5,
+        103.2,
+        480.5
+      ],
+      "id": "light_t2n6",
+      "kind": "ring",
+      "beginGT": 400,
+      "endGT": 408,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n7",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        547.5
+      ],
+      "id": "light_t2n7",
+      "kind": "ring",
+      "beginGT": 467,
+      "endGT": 475,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n8",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        613.5
+      ],
+      "id": "light_t2n8",
+      "kind": "ring",
+      "beginGT": 533,
+      "endGT": 541,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n9",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        44.5,
+        103.2,
+        680.5
+      ],
+      "id": "light_t2n9",
+      "kind": "ring",
+      "beginGT": 600,
+      "endGT": 608,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n10",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        747.5
+      ],
+      "id": "light_t2n10",
+      "kind": "ring",
+      "beginGT": 667,
+      "endGT": 675,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t2n11",
+      "family": "sub_bass",
+      "color": "416C91",
+      "position": [
+        48.5,
+        103.2,
+        813.5
+      ],
+      "id": "light_t2n11",
+      "kind": "ring",
+      "beginGT": 733,
+      "endGT": 741,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n0",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        88.5
+      ],
+      "id": "light_t3n0",
+      "kind": "node",
+      "beginGT": 8,
+      "endGT": 16,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n1",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        18.5,
+        112.2,
+        97.5
+      ],
+      "id": "light_t3n1",
+      "kind": "node",
+      "beginGT": 17,
+      "endGT": 25,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n2",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        222.5
+      ],
+      "id": "light_t3n2",
+      "kind": "node",
+      "beginGT": 142,
+      "endGT": 150,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n3",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        230.5
+      ],
+      "id": "light_t3n3",
+      "kind": "node",
+      "beginGT": 150,
+      "endGT": 158,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n4",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        18.5,
+        112.2,
+        355.5
+      ],
+      "id": "light_t3n4",
+      "kind": "node",
+      "beginGT": 275,
+      "endGT": 283,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n5",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        18.5,
+        112.2,
+        363.5
+      ],
+      "id": "light_t3n5",
+      "kind": "node",
+      "beginGT": 283,
+      "endGT": 291,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n6",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        488.5
+      ],
+      "id": "light_t3n6",
+      "kind": "node",
+      "beginGT": 408,
+      "endGT": 416,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n7",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        18.5,
+        112.2,
+        497.5
+      ],
+      "id": "light_t3n7",
+      "kind": "node",
+      "beginGT": 417,
+      "endGT": 425,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n8",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        622.5
+      ],
+      "id": "light_t3n8",
+      "kind": "node",
+      "beginGT": 542,
+      "endGT": 550,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n9",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        630.5
+      ],
+      "id": "light_t3n9",
+      "kind": "node",
+      "beginGT": 550,
+      "endGT": 558,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n10",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        822.5
+      ],
+      "id": "light_t3n10",
+      "kind": "node",
+      "beginGT": 742,
+      "endGT": 750,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t3n11",
+      "family": "chords",
+      "color": "8989B2",
+      "position": [
+        14.5,
+        112.2,
+        830.5
+      ],
+      "id": "light_t3n11",
+      "kind": "node",
+      "beginGT": 750,
+      "endGT": 758,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t4n0",
+      "family": "answer",
+      "color": "E6D8A9",
+      "position": [
+        14.5,
+        125.2,
+        180.5
+      ],
+      "id": "light_t4n0",
+      "kind": "node",
+      "beginGT": 100,
+      "endGT": 108,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t4n1",
+      "family": "answer",
+      "color": "E6D8A9",
+      "position": [
+        18.5,
+        125.2,
+        313.5
+      ],
+      "id": "light_t4n1",
+      "kind": "node",
+      "beginGT": 233,
+      "endGT": 241,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t4n2",
+      "family": "answer",
+      "color": "E6D8A9",
+      "position": [
+        18.5,
+        125.2,
+        447.5
+      ],
+      "id": "light_t4n2",
+      "kind": "node",
+      "beginGT": 367,
+      "endGT": 375,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t4n3",
+      "family": "answer",
+      "color": "E6D8A9",
+      "position": [
+        14.5,
+        125.2,
+        580.5
+      ],
+      "id": "light_t4n3",
+      "kind": "node",
+      "beginGT": 500,
+      "endGT": 508,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t4n4",
+      "family": "answer",
+      "color": "E6D8A9",
+      "position": [
+        18.5,
+        125.2,
+        663.5
+      ],
+      "id": "light_t4n4",
+      "kind": "node",
+      "beginGT": 583,
+      "endGT": 591,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "sourceId": "t4n5",
+      "family": "answer",
+      "color": "E6D8A9",
+      "position": [
+        14.5,
+        125.2,
+        738.5
+      ],
+      "id": "light_t4n5",
+      "kind": "node",
+      "beginGT": 658,
+      "endGT": 666,
+      "radius": 0.28,
+      "size": 0.35,
+      "points": 12
+    },
+    {
+      "id": "phrase_rise",
+      "kind": "bezier",
+      "beginGT": 267,
+      "endGT": 333,
+      "position": [
+        37.5,
+        117,
+        347
+      ],
+      "color": "A3C9DE",
+      "radius": 0.3,
+      "points": 24,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          26.5,
+          117,
+          347
+        ],
+        [
+          32.0,
+          125,
+          367
+        ],
+        [
+          43.0,
+          125,
+          387
+        ],
+        [
+          48.5,
+          117,
+          407
+        ]
+      ],
+      "semantic": "phrase-scale transition; not an onset"
+    },
+    {
+      "id": "phrase_return",
+      "kind": "bezier",
+      "beginGT": 534,
+      "endGT": 600,
+      "position": [
+        37.5,
+        117,
+        614
+      ],
+      "color": "A3C9DE",
+      "radius": 0.3,
+      "points": 24,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          29.5,
+          117,
+          614
+        ],
+        [
+          33.5,
+          122,
+          634
+        ],
+        [
+          41.5,
+          122,
+          654
+        ],
+        [
+          45.5,
+          117,
+          674
+        ]
+      ],
+      "semantic": "phrase-scale transition; not an onset"
+    },
+    {
+      "id": "phrase_close",
+      "kind": "bezier",
+      "beginGT": 733,
+      "endGT": 795,
+      "position": [
+        37.5,
+        117,
+        813
+      ],
+      "color": "A3C9DE",
+      "radius": 0.3,
+      "points": 24,
+      "size": 0.25,
+      "controlPoints": [
+        [
+          32.5,
+          117,
+          813
+        ],
+        [
+          35.0,
+          120,
+          833
+        ],
+        [
+          40.0,
+          120,
+          853
+        ],
+        [
+          42.5,
+          117,
+          873
+        ]
+      ],
+      "semantic": "phrase-scale transition; not an onset"
+    }
+  ],
+  "captions": [
+    {
+      "id": "title",
+      "begin": 0,
+      "end": 100,
+      "text": "Moon Traces",
+      "x": 0.5,
+      "y": 0.18
+    }
+  ],
+  "designNotes": [
+    "Quiet nodes distinguish role colors; only theme receives duration lines",
+    "Three broad phrase actions; no drum fireworks or retrigger bursts",
+    "Closing arc retires before the end; final silence remains visible"
+  ],
+  "clientVerified": false,
+  "artisticApproval": false
+}

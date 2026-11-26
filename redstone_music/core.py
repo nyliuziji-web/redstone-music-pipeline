@@ -37,7 +37,7 @@ DOMAINS = {
 }
 STAGE_INPUTS = {
     "music": ("midi", "approvedEvents", "referenceAudio"),
-    "sound": ("soundPack",), "machine": (), "visuals": ("captions",),
+    "sound": ("soundPack", "soundProfile", "adaptationPlan", "gameArrangement"), "machine": ("stageModule","trackDesign"), "visuals": ("captions", "showScore"),
     "validate": (), "release": (),
 }
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -76,10 +76,27 @@ def atomic_json(path, data):
             stream.write("\n")
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, path)
+        _move_output(temporary, path, replace=True)
     finally:
         if temporary.exists():
             temporary.unlink()
+
+
+def _move_output(source, destination, *, replace=False):
+    """Keep atomic promotion intact when Windows briefly holds a file or directory."""
+    for delay in (0, .10, .25, .50, 1.0):
+        if delay:
+            time.sleep(delay)
+        try:
+            if replace:
+                os.replace(source, destination)
+            else:
+                source.rename(destination)
+            return
+        except OSError as error:
+            if (getattr(error, 'winerror', None) not in {5, 32, 33}
+                    or (not replace and destination.exists()) or not source.exists() or delay == 1.0):
+                raise
 
 
 def owned(project, relative):
@@ -131,7 +148,7 @@ def load_config(project):
     return config
 
 
-def initialize(project, title=None, midi=None, approved_events=None, slug=None):
+def initialize(project, title=None, midi=None, approved_events=None, slug=None, reference_audio=None):
     project = Path(project).resolve()
     slug = slug or project.name
     validate_slug(slug)
@@ -141,21 +158,29 @@ def initialize(project, title=None, midi=None, approved_events=None, slug=None):
         "schemaVersion": 1, "slug": slug, "title": title or slug,
         "inputs": {"midi": str(Path(midi).resolve()) if midi else None,
                    "approvedEvents": str(Path(approved_events).resolve()) if approved_events else None,
-                   "referenceAudio": None, "soundPack": None, "captions": None},
-        "sound": {"retrigger": True, "profile": "vanilla"},
-        "machine": {"decorate": True}, "visuals": {"enabled": True},
+                   "referenceAudio": str(Path(reference_audio).resolve()) if reference_audio else None,
+                   "soundPack": None, "captions": None,
+                   "soundProfile": None, "adaptationPlan": None, "gameArrangement": None,
+                   "trackDesign": None, "stageModule": None, "showScore": None},
+        "sound": {"retrigger": True, "profile": "vanilla", "adapter":"role-consistent", "consistency":"role"},
+        "machine": {"decorate": True,"trackMode":"score"}, "visuals": {"enabled": True},
         "runtime": {"serverValidation": False, "java": None, "serverJar": None,
                     "traceAgent": None, "acceptEula": False},
         "policy": {"maxAttempts": 2, "maxDurationSeconds": 900, "maxNotes": 50000, "maxInputMiB": 256},
     }
-    for key in ("midi", "approvedEvents"):
+    for key in ("midi", "approvedEvents", "referenceAudio"):
         if config["inputs"][key] and not Path(config["inputs"][key]).is_file():
             raise PipelineError(f"Missing {key} input")
     project.mkdir(parents=True, exist_ok=False)
-    for name in ("artifacts", ".staging", "tasks", "sources", "reviews"):
+    for name in ("artifacts", ".staging", "tasks", "sources", "reviews", "evidence"):
         owned(project, name).mkdir()
     atomic_json(project / "project.json", config)
     atomic_json(project / "state.json", {"schemaVersion": 1, "stages": {}, "status": "initialized"})
+    (project / 'brief.md').write_text('# 作品需求\n\n' + config['title'] + '\n\n反馈约定：agent自主推进，代表样段与最终成品请用户听看。\n', encoding='utf-8')
+    (project / 'plan.md').write_text('# 制作计划\n\n1. 体检实际素材并建立角色/段落。\n2. 代表样段双试听及视觉预览。\n3. 按反馈修订、冻结、扩展全曲。\n4. 实际游戏、成片与交付验收。\n\n下一步：运行 capabilities 与 inspect-source；需要创作时读取对应 Skill。\n', encoding='utf-8')
+    atomic_json(project / 'source-manifest.json', {'schemaVersion': 1, 'sources': [
+        {'kind': key, 'path': value, 'sha256': hash_file(value), 'provenance': 'operator supplied', 'rights': 'operator must record source rights'}
+        for key, value in config['inputs'].items() if value]})
     return {"project": str(project), "status": "initialized", "config": config}
 
 
@@ -321,24 +346,45 @@ def input_fingerprint(project, config, stage, dependencies, module=None, overrid
                    "dependencies": dependencies})
 
 
-ROLES = ("music", "sound", "machine", "visuals", "quality")
+ROLES = ("music", "sound", "machine", "visuals", "quality", "producer", "arrangement", "stage")
+ROLE_SKILLS = {'music':'music-director','sound':'sound-designer','machine':'redstone-engineer',
+               'visuals':'show-director','quality':'verify-and-deliver','producer':'redstone-producer',
+               'arrangement':'noteblock-arranger','stage':'stage-designer'}
 ROLE_DOMAINS = {"music": {"music"}, "sound": {"sound"}, "machine": {"machine", "layout"},
-                "visuals": {"visuals"}, "quality": {"validation", "runtime"}}
-ROLE_IMPORTS = {"music": {"midi"}, "sound": {"soundPack"}, "machine": set(),
-                "visuals": {"captions"}, "quality": set()}
+                "visuals": {"visuals"}, "quality": {"validation", "runtime"},
+                "producer": set(), "arrangement": {"sound"}, "stage": {"machine"}}
+ROLE_IMPORTS = {"music": {"midi", "adaptationPlan"}, "sound": {"soundPack", "soundProfile"}, "machine": {"stageModule","trackDesign"},
+                "visuals": {"captions", "showScore"}, "quality": set(), "producer": set(),
+                "arrangement": {"adaptationPlan", "soundProfile","gameArrangement"}, "stage": {"stageModule"}}
+TASK_KINDS = {"review": {"review"}, "music_import": {"midi"},
+              "arrangement": {"adaptationPlan", "review"},
+              "game_arrangement": {"gameArrangement","review"},
+              "track_design": {"trackDesign","review"},
+              "sound_profile": {"soundProfile", "soundPack", "review"},
+              "show_score": {"showScore", "review"}, "stage_module": {"stageModule", "review"},
+              "engine_change": {"review", "proposal"}}
 
 
-def _request_signature(project, config):
+def _request_signature(project, config, include_artifacts=True):
     data = {"config": config, "files": {}}
     for key, value in config["inputs"].items():
         if value:
             p = source_path(project, value)
             data["files"][key] = hash_file(p) if p.is_file() else "missing"
+            if key == 'soundProfile' and p.is_file():
+                from .music_tools import sound_profile_dependencies
+                try:
+                    data['files']['soundProfileResources'] = {str(f): hash_file(f) if f.is_file() else 'missing'
+                        for f in sound_profile_dependencies(p)}
+                except (ValueError,OSError,TypeError,KeyError) as error:
+                    # A broken profile must still be representable in a repair task.
+                    data['files']['soundProfileResources'] = {'invalid':str(error)}
     # Include materialized artifacts, not mutable run timestamps or task state.
     state_path = owned(project, "state.json")
     state = read_json(state_path) if state_path.exists() else {}
-    data["artifacts"] = {key: value["fingerprint"] for key, value in state.get("stages", {}).items()
-                         if value.get("status") == "passed"}
+    if include_artifacts:
+        data["artifacts"] = {key: value["fingerprint"] for key, value in state.get("stages", {}).items()
+                             if value.get("status") == "passed"}
     return digest(data)
 
 
@@ -349,6 +395,8 @@ def create_music_task(project, config):
 def _create_task(project, config, role, objective, mode="review"):
     if role not in ROLES:
         raise PipelineError("Unknown specialist role")
+    if mode not in TASK_KINDS or not (TASK_KINDS[mode] - {'review', 'proposal'}) <= ROLE_IMPORTS[role]:
+        raise PipelineError('Task kind is unsupported for this role')
     signature = _request_signature(project, config)
     task_id = role + "-" + digest({"input": signature, "objective": objective, "mode": mode})[:16]
     folder = owned(project, "tasks/" + task_id)
@@ -357,19 +405,22 @@ def _create_task(project, config, role, objective, mode="review"):
         return read_json(task_file)
     folder.mkdir(parents=True)
     (folder / "output").mkdir()
+    from .kit import resource_root
+    skill = resource_root() / 'skills' / ROLE_SKILLS[role] / 'SKILL.md'
     task = {"schemaVersion": 1, "id": task_id, "role": role, "mode": mode, "status": "pending",
+            'skill':str(skill),'skillSha256':hash_file(skill),
             "inputFingerprint": signature, "createdAt": time.time(),
             "allowedOutput": str(folder / "output"), "agent": None,
             "objective": objective,
             "project": str(project), "references": config["inputs"],
             "allowedConfigDomains": sorted(ROLE_DOMAINS[role]),
             "allowedInputImports": sorted(ROLE_IMPORTS[role]),
-            "resultContract": {"outputs": ({"midi": f"tasks/{task_id}/output/master.mid"} if mode == "music_import"
-                                 else {"review": f"tasks/{task_id}/output/review.json"}),
+            "resultContract": {"outputs": {key: f"tasks/{task_id}/output/" +
+                ({'midi': 'master.mid', 'soundPack': 'resources.zip'}.get(key, key + '.json')) for key in sorted(TASK_KINDS[mode])},
                                "configPatch": {}, "notes": "provenance, changes, uncertainties and listening scope"}}
     atomic_json(task_file, task)
     (folder / "TASK.md").write_text(
-        f"# {role} specialist task\n\n{objective}\n\nRead project.json, state.json and task.json. "
+        f"# {role} specialist task\n\n{objective}\n\nRead {skill}, project.json, state.json and task.json. "
         "Inspect the corresponding stage artifacts and production skill. Write only to this task's output/. "
         "Return result.json inside the task directory with the resultContract fields. "
         "For a review provide review.json: {summary: string, evidence: list, limitations: list}. "
@@ -381,10 +432,10 @@ def _create_task(project, config, role, objective, mode="review"):
     return task
 
 
-def create_task(project, role, objective):
+def create_task(project, role, objective, kind='review'):
     project = Path(project).resolve(strict=True)
     with project_lock(project):
-        return _create_task(project, load_config(project), role, objective)
+        return _create_task(project, load_config(project), role, objective, kind)
 
 
 def list_tasks(project):
@@ -393,7 +444,7 @@ def list_tasks(project):
 
 
 def _find_task(project, task_id):
-    if not re.fullmatch(r"(?:music|sound|machine|visuals|quality)-[a-f0-9]{16}", task_id):
+    if not re.fullmatch(r"(?:" + '|'.join(ROLES) + r")-[a-f0-9]{16}", task_id):
         raise PipelineError("Invalid task ID")
     return owned(project, f"tasks/{task_id}/task.json")
 
@@ -435,7 +486,7 @@ def complete_task(project, task_id, result):
             raise PipelineError("Result JSON must be inside the task directory")
         data = read_json(result_path)
         outputs = data.get("outputs")
-        required = {"midi"} if task["mode"] == "music_import" else {"review"}
+        required = TASK_KINDS[task['mode']]
         allowed = ROLE_IMPORTS[task["role"]] | required
         if not isinstance(outputs, dict) or not required <= outputs.keys() or not outputs.keys() <= allowed:
             raise PipelineError(f"Task outputs must include {sorted(required)} and only {sorted(allowed)}")
@@ -447,13 +498,28 @@ def complete_task(project, task_id, result):
             if key == "midi":
                 from .midi import parse_midi
                 parse_midi(resource.read_bytes())
-            elif key in {"review", "captions"}:
+            elif key in {"review", "captions", "adaptationPlan", "soundProfile", "stageModule", "showScore", "proposal",
+                         "gameArrangement","trackDesign"}:
                 document = read_json(resource)
                 if not isinstance(document, dict):
                     raise PipelineError(f"{key} must be a JSON object")
                 if key == "review" and not (isinstance(document.get("summary"), str)
                         and isinstance(document.get("evidence"), list) and isinstance(document.get("limitations"), list)):
                     raise PipelineError("Review requires summary, evidence and limitations")
+                contracts = {'soundProfile': 'sound-profile', 'stageModule': 'stage-module', 'showScore': 'show-score',
+                             'adaptationPlan': 'adaptation-plan', 'gameArrangement': 'game-arrangement',
+                             'trackDesign': 'track-design'}
+                if key in contracts:
+                    from .contracts import validate_contract
+                    validate_contract(document, contracts[key])
+                if key == 'soundProfile':
+                    from .music_tools import validate_sound_profile
+                    validate_sound_profile(resource)
+                    for slot in document.get('slots', {}).values():
+                        if slot.get('sample'):
+                            sample = (resource.parent / slot['sample']).resolve()
+                            if not sample.is_relative_to((path.parent / 'output').resolve()):
+                                raise PipelineError('Task sound samples must remain inside its output directory')
             elif key == "soundPack":
                 import zipfile
                 with zipfile.ZipFile(resource) as archive:
@@ -480,8 +546,8 @@ def complete_task(project, task_id, result):
         for domain, values in patch.items():
             if not isinstance(values, dict):
                 raise PipelineError("Configuration domains must be objects")
-            supported = {'music': {}, 'sound': {'profile': str, 'retrigger': bool},
-                         'machine': {'decorate': bool}, 'layout': {}, 'visuals': {'enabled': bool},
+            supported = {'music': {}, 'sound': {'profile': str, 'retrigger': bool, 'adapter':str, 'consistency':str},
+                         'machine': {'decorate': bool,'trackMode':str}, 'layout': {'families': list, 'camera': dict}, 'visuals': {'enabled': bool},
                          'validation': {}, 'runtime': {'serverValidation': bool, 'timeoutSeconds': int}}[domain]
             if not values.keys() <= supported.keys():
                 raise PipelineError(f'Unsupported configuration keys in {domain}; a code change is needed')
@@ -596,10 +662,10 @@ def run_pipeline(project, until="release", force=False, overrides=None):
                     else:
                         quarantine = owned(project, ".quarantine/" + stage + "-" + uuid.uuid4().hex)
                         quarantine.parent.mkdir(parents=True, exist_ok=True)
-                        destination.rename(quarantine)
-                        staging.rename(destination)
+                        _move_output(destination, quarantine)
+                        _move_output(staging, destination)
                 else:
-                    staging.rename(destination)
+                    _move_output(staging, destination)
                 staging = None
                 state["stages"][stage] = record
                 outputs[stage] = str(destination)
@@ -654,10 +720,15 @@ def status(project):
 
 
 def doctor(project=None):
+    from .kit import capabilities
+    actual = capabilities(project, probe=False)
     result = {"python": sys.version.split()[0], "node": shutil.which("node"),
               "ffmpeg": shutil.which("ffmpeg"), "packageRoot": str(Path(__file__).resolve().parent),
               "modules": {stage: importlib.util.find_spec("redstone_music." + stage) is not None for stage in STAGES}}
     result["dependencies"] = {name: importlib.util.find_spec(name) is not None for name in ("nbtlib", "numpy", "litemapy")}
+    result['capabilities'] = actual['capabilities']
+    result['toolChecks'] = actual['commands']
+    result['scope'] = 'Lightweight local operations; no game, listening or artistic pass inferred'
     result["executableStages"] = {stage: {"moduleAvailable": result["modules"][stage],
         "prerequisitesAvailable": (bool(result["node"]) and result["dependencies"]["nbtlib"])
             if stage in ("machine", "visuals", "validate") else True} for stage in STAGES}

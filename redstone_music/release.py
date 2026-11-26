@@ -57,9 +57,14 @@ def run(ctx):
     if resource.exists():
         shutil.copyfile(resource, package / "resources.zip")
         shutil.copyfile(resource, package / "world/resources.zip")
+    for name in ('game-performance.mid','arrangement-report.json'):
+        if (deps['sound']/name).is_file():
+            shutil.copyfile(deps['sound']/name,package/name)
+    if (machine/'track-plan.json').is_file():
+        shutil.copyfile(machine/'track-plan.json',package/'track-plan.json')
     visuals = deps.get("visuals")
     if visuals:
-        for name in ("client.jar", "show_assets.json", "captions.json"):
+        for name in ("client.jar", "show_assets.json", "captions.json", "show_score.json"):
             if (visuals / name).exists():
                 shutil.copyfile(visuals / name, package / name)
     # Export concise facts only; project config can contain local/private paths.

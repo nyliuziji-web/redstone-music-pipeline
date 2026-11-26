@@ -9,7 +9,11 @@ permissions:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -17,10 +21,31 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
+      - name: Install Linux audio tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg portaudio19-dev libsndfile1
+      - name: Install Windows media tools
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg -y --no-progress
       - name: Install package
-        run: python -m pip install .
+        run: python -m pip install ".[production,pitch,dev]"
       - name: Check CLI
         run: python -m redstone_music doctor
       - name: Test contracts and original demo integration
         run: python -m unittest discover -s tests -v
+      - name: Verify bundled skills and build wheel
+        run: |
+          python -m redstone_music bundle-check
+          python -m build --wheel
+  fabric-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build standard Fabric client
+        working-directory: client
+        run: ./gradlew --no-daemon --console=plain build

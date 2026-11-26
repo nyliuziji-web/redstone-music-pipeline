@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "id": "original_timbre_study",
+  "slots": {
+    "lead": {
+      "instrument": "banjo",
+      "baseBlock": "minecraft:hay_block",
+      "rootMidi": 72,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 72,
+        "kind": "pluck",
+        "seconds": 1,
+        "gain": 0.21,
+        "attackWeight": 0.24,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    },
+    "voice": {
+      "instrument": "flute",
+      "baseBlock": "minecraft:clay",
+      "rootMidi": 72,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 72,
+        "kind": "vowel",
+        "seconds": 3.2,
+        "gain": 0.14,
+        "attackWeight": 0.12,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    },
+    "harmony": {
+      "instrument": "harp",
+      "baseBlock": "minecraft:dirt",
+      "rootMidi": 66,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 66,
+        "kind": "sustain",
+        "seconds": 1.8,
+        "gain": 0.075,
+        "attackWeight": 0.12,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    },
+    "bass": {
+      "instrument": "bass",
+      "baseBlock": "minecraft:oak_planks",
+      "rootMidi": 42,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 42,
+        "kind": "bass",
+        "seconds": 1.1,
+        "gain": 0.18,
+        "attackWeight": 0.12,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    },
+    "kick": {
+      "instrument": "basedrum",
+      "baseBlock": "minecraft:stone",
+      "rootMidi": 66,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 66,
+        "kind": "kick",
+        "seconds": 0.3,
+        "gain": 0.18,
+        "attackWeight": 0.12,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    },
+    "snare": {
+      "instrument": "snare",
+      "baseBlock": "minecraft:sand",
+      "rootMidi": 66,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 66,
+        "kind": "snare",
+        "seconds": 0.22,
+        "gain": 0.1,
+        "attackWeight": 0.12,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    },
+    "hats": {
+      "instrument": "hat",
+      "baseBlock": "minecraft:glass",
+      "rootMidi": 66,
+      "sustain": {
+        "mode": "natural"
+      },
+      "recipe": {
+        "schemaVersion": 1,
+        "rootMidi": 66,
+        "kind": "hat",
+        "seconds": 0.12,
+        "gain": 0.055,
+        "attackWeight": 0.12,
+        "bodyWeight": 0.88,
+        "releaseSeconds": 0.06
+      }
+    }
+  },
+  "roles": {
+    "theme_attack": "lead",
+    "voice": "voice",
+    "chords": "harmony",
+    "sub_bass": "bass",
+    "kick": "kick",
+    "snare": "snare",
+    "hats": "hats"
+  },
+  "description": "Original CC0 recipe study; no stock Minecraft audio or third-party samples"
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schemaVersion", "sourceMidiSha256", "edits"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "sourceMidiSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "protectedRoles": {"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "edits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["noteId", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "noteId": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "pattern": "\\S"},
+          "midi": {"type": "integer", "minimum": 0, "maximum": 127},
+          "role": {"type": "string", "minLength": 1},
+          "shiftGT": {"type": "integer", "minimum": -40, "maximum": 40},
+          "omit": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

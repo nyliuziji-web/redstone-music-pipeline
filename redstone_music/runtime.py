@@ -9,6 +9,8 @@ import subprocess
 import threading
 import time
 
+from .camera_rail import camera_target
+
 
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -68,7 +70,9 @@ def run_server(ctx,out,info):
         bypos={(n['x'],n['y'],n['z']):n for n in expected}
         for n in actual:
             q=bypos[n['x'],n['y'],n['z']]['q']
-            if n['camera']!=[37.5,112.5,70.5+q]:raise ValueError('Actual server camera target drifted')
+            target = camera_target(info['camera'], q)
+            if any(abs(a-b)>0.001 for a,b in zip(n['camera'],target)):
+                raise ValueError(f'Actual server camera target drifted at tick {q}: {n["camera"]} versus {target}')
         return len(actual)
     try:
         until(r'Done \(');until('NEVADA_FULL_READY')
